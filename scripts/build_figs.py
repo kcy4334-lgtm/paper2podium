@@ -3182,6 +3182,15 @@ def draw_bars(t, path, title=None, ylabel=None, note=None, slot=None,
         ax.set_position([_pos.x0 + _dx, _pos.y0 + _dy,
                          max(0.2, _pos.width - _dx),
                          max(0.2, _pos.height - _dy)])
+        # A shorter axis can get different ticks with wider labels, which pushes the y label
+        #   back past the left edge; measure it again after the move.
+        if _yl.get_text().strip():
+            fig.canvas.draw()
+            _b = _yl.get_window_extent(fig.canvas.get_renderer())
+            if _b.x0 < 3:
+                _p2 = ax.get_position()
+                _d2 = (3 - _b.x0) / _W
+                ax.set_position([_p2.x0 + _d2, _p2.y0, max(0.2, _p2.width - _d2), _p2.height])
     # Value-text overlap is measured only after the axis is fully settled:
     #   a callout and the margin push both change the axis, which moves the text.
     _vt = list(_vtext.values())
