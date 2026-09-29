@@ -8734,7 +8734,9 @@ class BottomBandShare(unittest.TestCase):
         self.assertEqual([x for x in self._warn("Bar heights are shape.") if "doesn't fit" in x], [])
         long = ("Bar heights are shape, not data; the accent bar is the stop the argument turns on, "
                 "every other bar is only there to show the grouping, and both rows are drawn at "
-                "one height so the page stays quiet around that single accent bar.")
+                "one height so the page stays quiet around that single accent bar, and the same "
+                "holds for the second panel, where the rows repeat the grouping once more so the "
+                "viewer can compare the two schedules side by side without counting any bars.")
         got = self._warn(long)
         self.assertTrue(any("share one line" in x for x in got), got)
 
