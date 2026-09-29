@@ -1,0 +1,26 @@
+# Synthetic fixture config — a testbed to check that this skill runs **outside
+# the project it was extracted from**.
+# The topic and numbers are entirely made up.
+
+root: .
+
+source:
+  - paper.tex        # manuscript only — adding the memo (numbers.md) would let section A pass values absent from the manuscript
+
+derivative:
+  deck:   deck.tex
+  spoken: script.md
+
+sidecar: figvalues.txt
+drop_commands: [note]
+skip_numbers: []
+ban_file: banned.txt
+
+coverage_pattern: '&\s*(?:\\textbf\{)?(?:\\textminus)?(\d{1,2}\.\d)'
+
+claims:
+  - {label: anode CC-CV,   value: "12.3", source: 'textminus12\.3'}
+  - {label: anode pulse,   value: "45.6", source: 'textminus45\.6'}
+
+# the deck casually calls the manuscript's "capacity" "retention" — noted here
+coined_ok: [retention]

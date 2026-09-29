@@ -1,0 +1,43 @@
+# deckcheck config for the GW150914 talk. Source = the paper only.
+root: .
+
+source:
+  - paper/paper.md
+
+spec: slides.yaml
+
+derivative:
+  deck:   out/talk.tex
+  pptx:   out/talk.pptx
+  spoken: out/script.md
+
+sidecar: out/figs/values.txt
+
+syntax: latex
+drop_commands: [note]
+skip_numbers: [16, 9]
+
+ban_file: banned.txt
+
+ok_fonts: [Arial, Courier New]
+aspect: "16:9"
+
+# Section E: the paper has one table (Table I) that arrives as running text. Sweep the
+# decimals with a credible interval that the table and abstract print ("36+5 −4" style
+# is integer; the decimals are spin 0.67, redshift 0.09, energy 3.0, luminosity 3.6),
+# plus the significance values written as N.Nσ.
+coverage_pattern: '(?<![\w.])(\d{1,2}\.\d+)(?=\+|σ)'
+
+claims:
+  - {label: binary search significance, value: "5.1", source: 'corresponding to 5\.1σ'}
+  - {label: generic search significance, value: "4.6", source: 'equivalent to 4\.6σ'}
+  - {label: binary search false alarm bound, value: "203 000", source: '1 in 203 000 years'}
+  - {label: generic false alarm, value: "22 500", source: '1 in 22 500 years'}
+  - {label: arrival time difference, value: "6.9", source: '6\.9\+0\.5'}
+  - {label: combined SNR, value: "24", source: 'combined signal-tonoise ratio \(SNR\) of 24'}
+  - {label: primary mass, value: "36", source: 'Primary black hole mass 36\+5'}
+  - {label: secondary mass, value: "29", source: 'Secondary black hole mass 29\+4'}
+  - {label: final mass, value: "62", source: 'Final black hole mass 62\+4'}
+  - {label: radiated energy, value: "3.0", source: 'radiated in gravitational waves is 3\.0\+0\.5'}
+  - {label: environmental fraction, value: "6%", source: 'more than 6% of its strain amplitude'}
+  - {label: localization, value: "600", source: 'approximately 600 deg2'}

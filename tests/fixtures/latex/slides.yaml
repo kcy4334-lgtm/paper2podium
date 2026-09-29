@@ -1,0 +1,79 @@
+# A filled-in slides.yaml — what it looks like after a person (or an agent) fills in scaffold.py's TODOs.
+# talk.tex, talk.pptx, and script.md are all generated from this one file.
+# The topic and numbers are entirely made up (synthetic fixture).
+
+meta:
+  title: "Pulse charging deepens the anode's fade"
+  subtitle: "Capacity fade in fast-charged cells under two protocols"
+  author: "Fixture Author"
+  venue: "Synthetic Conference 2026"
+  wpm: 135
+  aspect: "16:9"
+  figdir: figs
+
+slides:
+  - kind: title
+
+  - kind: content
+    title: "Where does a fast-charged cell lose its capacity?"
+    bullets:
+      - "The anode carries most of the loss under both protocols"
+      - "Baseline retention is 92.4 percent before either one"
+    note: "빠른 충전기를 쓰는 사람이 있는지 청중에게 손을 들게 한다."
+    say:
+      - "We charged the same cells two ways and asked where the capacity goes."
+      - "Most of it goes to one electrode, under either charger."
+    pause: 2
+
+  - kind: table
+    title: "Three electrodes, two chargers"
+    table:
+      align: "lrr"
+      header: ["Electrode", "CC-CV", "Pulse"]
+      rows:
+        - ["Anode", "-12.3", "-45.6"]
+        - ["Cathode", "-1.4", "-3.1"]
+        - ["Separator", "-0.3", "-0.5"]
+      note: "Retention change in percent, over 600 cycles."
+    note: "★표를 읽지 말고 첫 행의 두 칸만 손으로 짚는다."
+    say:
+      - "Start at the anode row; the other rows are there for scale."
+      - "Under CC-CV the anode loses 12.3 percent and the cathode is flat."
+      - "Under pulse charging the same anode loses 45.6, and the cathode stays nearly flat."
+    ko:
+      - "표를 읽지 마시고 두 칸만 보십시오."
+      - "CC-CV에서는 음극이 12.3퍼센트를 잃고 양극은 거의 그대로입니다."
+      - "펄스 충전에서는 같은 음극이 45.6퍼센트를 잃고 양극은 거의 그대로입니다."
+    pause: 4
+
+  - kind: figure
+    title: "The same thing, drawn"
+    figure:
+      path: fade.png
+      lead: "Each electrode, under both charging protocols."
+      caption: "Retention change in percent. Same numbers as the table."
+      max_height: 4.8cm
+    note: "★막대 두 쌍만 짚는다. 축은 읽지 않는다."
+    say:
+      - "Same numbers as the table, in the shape you remember."
+      - "The anode bar is the tall one in both groups."
+    pause: 2
+
+  - kind: standout
+    big: "-12.3 vs -45.6"
+    bullets: ["Pulse costs the anode nearly four times as much"]
+    note: "★두 수를 차례로 가리키고 바로 넘어간다."
+    say:
+      - "Pulse charging takes nearly four times as much from the anode."
+    pause: 3
+
+  - kind: content
+    title: "The separator barely moves"
+    bullets:
+      - "The separator stays inside 0.5 percent either way"
+      - "24 cells per arm, 600 cycles"
+    note: "분리막 값은 한 번 가리키고 바로 넘어간다."
+    say:
+      - "The separator never moves more than 0.5 percent under either protocol."
+      - "The fade sits in the anode, not in the cell as a whole."
+    pause: 2

@@ -1,0 +1,16 @@
+# Banned wording for the GW150914 talk. One word or phrase per line.
+# The reason sits on its own comment line above each entry, so it cannot become part of the pattern.
+
+# hype the paper never uses
+groundbreaking
+revolutionary
+unprecedented
+proves
+# the paper says "matches" / "consistent with"; "confirms Einstein" overclaims the GR tests
+confirms Einstein
+# the 5.1 sigma is a bound (no background event as loud); never call it exact
+exactly 5.1
+# the paper says rates are "consistent with a broad range", not measured
+measured the rate
+# only two detectors: never claim a precise sky position
+pinpointed

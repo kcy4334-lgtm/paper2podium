@@ -1,0 +1,21 @@
+{
+  "name": "paper2podium",
+  "owner": {
+    "name": "kcy4334-lgtm",
+    "url": "https://github.com/kcy4334-lgtm/paper2podium"
+  },
+  "metadata": {
+    "description": "Build a conference talk from a finished paper, and check the derivative against the source in both directions.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "paper2podium",
+      "source": "./",
+      "description": "Paper or report to slide deck, PowerPoint and speaker script, with every number traceable to the source.",
+      "license": "MIT",
+      "category": "writing",
+      "keywords": ["slides", "beamer", "pptx", "presentation", "latex", "talk"]
+    }
+  ]
+}

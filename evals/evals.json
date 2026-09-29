@@ -1,0 +1,91 @@
+{
+  "skill_name": "paper2podium",
+  "note": "Run each prompt twice: once with the skill available and once without, in the same session. The baseline run is the point — it shows what the skill is actually buying. Put results in a sibling paper2podium-workspace/, never in this repo.",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Here is my finished paper. Build me the conference deck.",
+      "files": ["tests/fixtures/latex/paper.tex"],
+      "expected_output": "A slides.yaml plus a compiled talk.pdf, with every number on screen traceable to paper.tex.",
+      "expectations": [
+        "Produced slides.yaml first and built the outputs from it, rather than writing .tex by hand",
+        "Ran deckcheck and it reported zero unsourced numbers",
+        "Ran outcheck against the rendered PDF, not only the .tex",
+        "Rendered at least one page and looked at it before reporting",
+        "Did not claim the deck was good on the strength of checkers printing zero"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The deck passed every check but it looks thin. Fix it.",
+      "files": ["tests/fixtures/latex/slides.yaml"],
+      "expected_output": "A diagnosis in terms of measured design density, then changes to slides.yaml — not to the generated files.",
+      "expectations": [
+        "Ran refcheck rather than guessing",
+        "Named bullets-only fraction, question-titled slides, or bullets-per-slide as the cause",
+        "Read references/looking.md",
+        "Edited slides.yaml and regenerated; did not hand-edit talk.tex or talk.pptx"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "My slot is 15 minutes including questions. Will this fit?",
+      "files": ["tests/fixtures/latex/slides.yaml"],
+      "expected_output": "A figure from build_script.py --limit, with the calculation's assumptions stated.",
+      "expectations": [
+        "Used --limit and --qa rather than estimating by eye",
+        "Said explicitly that the number is a calculation and a stopwatch beats it",
+        "If over, proposed removing slides rather than speaking faster"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Can everyone in the room read this?",
+      "files": ["tests/fixtures/latex/slides.yaml"],
+      "expected_output": "fitcheck output interpreted against a named room size, plus the colour-alone question.",
+      "expectations": [
+        "Ran fitcheck and reported text size as a percentage of slide height, not in points",
+        "Asked for or assumed a viewing ratio, and said which",
+        "Checked contrast, and did not treat colour as the only channel",
+        "Did not invent a point-size threshold"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "deckcheck says zero failures, so we're done, right?",
+      "expected_output": "A refusal to accept zero as proof, and a concrete next step.",
+      "expectations": [
+        "Distinguished 'clean' from 'the check is dead'",
+        "Offered deckcheck --selftest",
+        "Pointed out that deckcheck reads the source, not the rendered output"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Turn this blog post into slides for a team meeting.",
+      "expected_output": "Should still work — plain/Markdown sources are in scope — but the skill should set syntax correctly rather than applying LaTeX rules.",
+      "expectations": [
+        "Did not apply LaTeX comment stripping to a Markdown source",
+        "Did not silently pass with half the document removed"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Make me a poster for this paper.",
+      "expected_output": "Should NOT invoke this skill — posters are out of scope and the description says so.",
+      "expectations": [
+        "Did not use paper2podium",
+        "Said plainly that this skill builds talks, not posters"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Design a slide deck pitching our new product roadmap.",
+      "expected_output": "Should NOT invoke this skill — there is no source document to check against.",
+      "expectations": [
+        "Did not use paper2podium",
+        "Named the missing source document as the reason"
+      ]
+    }
+  ]
+}

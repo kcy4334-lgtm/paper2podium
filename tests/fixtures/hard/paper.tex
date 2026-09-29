@@ -1,0 +1,29 @@
+% Regression fixture — collects only the patterns that broke compilation in a real paper.
+% ★The values are made up. What this file guards is the shape, not the values.
+%   Shapes guarded: braces inside a column spec, nested `\textbf{\textminus...}`,
+%   `$<$10$^{-4}$`, six columns, `\footnote`, the word after `\\` in a title, a second section.
+\documentclass{article}
+\title{Hard cases\\Within one small file}
+\author{Fixture Author}
+\begin{document}
+
+\section{Results}
+The new timetable~\cite{someref} cuts the delay on Route 7 by \textbf{\textminus18.9} minutes at
+$p<10^{-4}$, while Route 12 changes by only \textminus5.6.
+See Table~\ref{tab:main} and the note\footnote{dropped entirely}.
+
+% ★There is a brace inside the column spec. Reading it with `[^}]*` breaks here,
+%   counting 5 columns while 6 actually come in, causing "Extra alignment tab".
+\begin{tabular}{llrc@{\hskip 5pt}rr}
+\toprule
+Route & Depot & Delay change & $p$ & Stops & Late runs \\
+\midrule
+Route 7 & North & \textbf{\textminus18.9} & \textbf{$<$10$^{-4}$} & 51 & 27.1 \\
+Route 12 & South & \textminus5.6 & 0.39 & 39 & 12.6 \\
+\bottomrule
+\end{tabular}
+
+\section{Discussion}
+Nothing here matters except that a second section exists.
+
+\end{document}

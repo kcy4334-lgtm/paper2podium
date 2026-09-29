@@ -1,0 +1,77 @@
+# deckcheck.py configuration template
+#
+#   python scripts/deckcheck.py my-deck.yaml
+#
+# Everything project-specific lives here. Don't edit the scripts.
+
+root: .                       # base directory for the paths below, relative to this file
+
+# ── The source of truth. A number in the derivative that is not here fails ─────
+source:
+  - paper/paper.tex
+# List the paper only. If a notes file (numbers.md) is listed here, a number that is in
+#   your notes but not in the paper passes section A, and catching that is what A is for.
+
+# The spec the deck was built from. Its meta.coined_ok counts for section H too.
+spec: slides.yaml
+
+# ── The derivatives. List only the ones you have ──────────────────────────────
+derivative:
+  deck:   out/talk.tex        # typesetting source
+  pptx:   out/talk.pptx       # optional
+  spoken: out/script.md       # optional: the words you will say out loud
+
+# Numbers rendered into figures. Your generator writes this with sidecar.write().
+sidecar: out/figs/values.txt
+
+# ── How to read the deck source ───────────────────────────────────────────────
+# latex : strip comments, commands, dimensions, speaker notes
+# plain : Markdown or plain text; `%` and units are content, not syntax
+#
+# Getting this wrong silently disables the checker. If the LaTeX rules are applied to a
+#   Markdown file, `%` starts a comment and the rest of every such line is deleted.
+#   In testing, half a deck disappeared and the run still reported a pass. The checker
+#   now refuses `latex` on a file with no backslashes instead of warning about it.
+syntax: latex
+
+# LaTeX commands whose contents never reach the screen.
+drop_commands: [note]
+
+# Numbers that aren't content: aspect ratios, font sizes, page counts.
+# Without these, section A gets noisy and you stop reading it.
+skip_numbers: [16, 9]
+
+# Banned wording. Write the word, not a regex. A plain line gets word boundaries
+#   and case-insensitive matching added for you, so a regex typo cannot disable it.
+#   Prefix a line with `re:` only when you need a pattern.
+# Keep the list in one file; two copies will diverge.
+#   `deckcheck.py <cfg> --selftest` names every line it could not verify.
+ban_file: banned.txt
+
+# ── PPTX only ─────────────────────────────────────────────────────────────────
+# page_denominator: 16        # read from the PPTX's own page numbers; set it only to override
+# PowerPoint cannot embed fonts, so only fonts already on the venue machine work.
+#   The defaults (Arial, Courier New) exist on both Windows and macOS. If you know the
+#   venue runs Windows, set `meta.pptx_font: Segoe UI` in slides.yaml instead.
+ok_fonts: [Arial, Courier New]
+aspect: "16:9"
+
+# ── Section E: which values to sweep for reverse coverage ─────────────────────
+# Narrow this, or the result is noise: a paper has hundreds of decimal values.
+#   The example below sweeps LaTeX table cells only (`& \textbf{\textminus12.3`).
+#   For a Markdown source, something like '(?<![\w.])(\d{1,3}\.\d)(?![\d])' on a
+#   file that contains only your results table works better.
+coverage_pattern: '&\s*(?:\\textbf\{)?(?:\\textminus)?(\d{1,2}\.\d+)'
+# The appendix is left out of E (it is not what the talk presents). Set this to
+# sweep it too.
+# coverage_appendix: true
+
+# ── Key claims: must appear in both the derivative and the source ─────────────
+# `source` pins the context the value appears in, not just the digits. Without it
+# you will match an unrelated number that happens to be the same.
+# Omit `source` to check for the bare value.
+# The pattern runs on the paper after its macros are expanded: write what
+# `\gopher` becomes (`\textit{Gopher}`), not the macro name.
+claims:
+  - {label: headline result, value: "12.3", source: 'textminus12\.3'}
+  - {label: second result,   value: "45.6", source: 'textminus45\.6'}

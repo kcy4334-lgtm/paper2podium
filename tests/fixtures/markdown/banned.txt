@@ -1,0 +1,5 @@
+# Banned phrases for the synthetic fixture
+\bstate-of-the-art\b
+\bproves?\b
+\bmagical\b
+^so\s

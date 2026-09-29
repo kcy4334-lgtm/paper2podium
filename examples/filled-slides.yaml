@@ -1,0 +1,95 @@
+# A filled slides.yaml — what scaffold.py's output looks like once a person (or an agent)
+# has filled in the TODOs. talk.tex, talk.pptx and script.md all come from this one file.
+# The subject and every number are invented (a synthetic fixture).
+#
+# Agents copy this file, so it must follow SKILL.md. If it breaks a rule, an agent
+#   follows this file, not the document. Earlier versions of it contained a figure slide
+#   repeating the values of the table slide just before it, label-style bullets, and a
+#   `big` with one value, and agents copied all three. So in this file
+#     · titles are claims (one of them a question)
+#     · one bullet per slide, a sentence that carries its evidence
+#     · the table is replaced by `chart: {from: self}`, so the same values are not shown
+#       twice, as a table and as a figure
+#     · `big` is two values set against each other
+#     · the closing standout restates `meta.thesis`
+#   The structure comes from this subject. Another paper needs a different number, order
+#     and kind of slides; do not use this file's sequence as a template.
+
+meta:
+  title: "Late opening brings readers who stay, not readers who borrow"
+  subtitle: "Evening visits and loans after a library extended its hours"
+  author: "Fixture Author"
+  venue: "Synthetic Conference"
+  lang: en
+  wpm: 135
+  aspect: "16:9"
+  thesis: "Evening hours raised visits but left loans almost where they were"
+  # A real deck names its paper here (`paper: ../paper/paper.tex`) so prose_audit and
+  # deckcheck H can compare the deck's words with it. This invented subject has no paper.
+
+slides:
+  - kind: title
+
+  - kind: figure
+    title: "Who comes when a library stays open late?"
+    diagram:                             # a slide with no table gets a diagram, not bullets alone
+      kind: flow
+      boxes:
+        - {label: "branches open two hours later"}
+        - {label: "door sensor counts each visit"}
+        - {label: "catalogue logs each loan", mark: a}
+      note: "Visits and loans come from two separate records, so one cannot inflate the other."
+    cue: "Ask for a show of hands: who has been to a library in the evening?"
+    say:
+      - "The branches stayed open two hours longer, and we counted two things separately."
+      - "Who walked in, and who walked out with a book."
+    pause: 2
+
+  - kind: figure
+    title: "Visits climb through the evening and peak in the hour after the old closing time"
+    chart: {from: self, kind: bars, values: true, ylabel: "visits per branch per evening",
+            callout: {at: "Seven to eight", text: "old closing time was seven"}}
+    table:                               # the chart replaces it; only the bars reach the slide
+      header: ["Hour", "Visits"]
+      rows:
+        - ["Before six", "27.1"]
+        - ["Six to seven", "31.8"]
+        - ["Seven to eight", "<safe>33.6</safe>"]
+        - ["After eight", "24.1"]
+    foot: ["Mean over the first term with the new hours."]
+    cue: "Point at the tallest bar once, then move on."
+    say:
+      - "The busiest hour is the one that used to be closed."
+      - "Thirty-three point six visits per branch, more than any hour before it."
+    ko:
+      - "가장 붐비는 시간은 예전에는 문을 닫던 바로 그 시간입니다."
+      - "지점당 33.6명으로, 그 앞 어느 시간보다 많습니다."
+    pause: 3
+
+  - kind: standout
+    big:
+      - {value: "+18.9%", label: "visits", note: "after the change", mark: safe}
+      - {value: "+1.9%", label: "loans", note: "after the change"}
+    gap: "or"
+    bullets: ["The new evening readers **stay and read**; they do not take more books home."]
+    cue: "Point at the two numbers in turn, then read the sentence at once."
+    say:
+      - "Visits rose by almost a fifth. Loans barely moved."
+    pause: 2
+
+  - kind: content
+    title: "We counted doors, not people, so the rise is a ceiling on new readers"
+    bullets:
+      - "A reader who leaves and comes back counts twice at the door, so **14.3 percent** of
+         evening visits may be repeat entries by the same person."
+    note: "This slide guards against overclaiming. Say the number as it is, neither lower nor higher."
+    say:
+      - "The door sensor cannot tell one reader from another."
+      - "So read the rise in visits as an upper bound on how many new people came."
+    pause: 2
+
+  - kind: standout                       # the closing standout restates meta.thesis
+    big: "Evening hours raised visits but left loans almost where they were"
+    say:
+      - "Longer evenings brought more people through the door, not more books out of it."
+    pause: 3

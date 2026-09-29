@@ -1,0 +1,10 @@
+# Banned phrases for the synthetic fixture
+#
+# ★**Just write the word as plain text.** The checker adds word boundaries and
+#   case-insensitivity. To use a regex, prefix it with `re:` to declare the
+#   intent — otherwise `--selftest` would count it as an unchecked line and
+#   move past it.
+state-of-the-art
+magical
+re:\bproves?\b
+re:^so\s

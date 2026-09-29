@@ -1,0 +1,13 @@
+# ★Markdown manuscript fixture — a testbed poking at whether a LaTeX assumption snuck in.
+root: .
+source: [paper.md]
+derivative:
+  deck: deck.md
+skip_numbers: []
+ban_file: banned.txt
+coverage_pattern: '(?<![\w.])(\d{1,3}\.\d)(?![\d])'
+claims:
+  - {label: anode CC-CV,   value: "12.3"}
+  - {label: anode pulse,   value: "45.6"}
+
+syntax: plain

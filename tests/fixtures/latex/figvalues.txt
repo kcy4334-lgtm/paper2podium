@@ -1,0 +1,3 @@
+# Values drawn in the figure — the checker reads this. Do not edit by hand.
+fig1	Anode	CC-CV	-12.3	1.0e-04
+fig1	Anode	Pulse	-45.6	2.0e-06

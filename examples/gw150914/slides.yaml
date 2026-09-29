@@ -1,0 +1,377 @@
+# Single source read by build_deck.py, build_pptx.py and build_script.py.
+# Filled from the scaffold for the GW150914 paper. See plan.md for why each slide exists.
+
+meta:
+  title: "Observation of Gravitational Waves from a Binary Black Hole Merger"
+  subtitle: "GW150914, seen by both LIGO detectors on September 14, 2015"
+  author: "B. P. Abbott et al."
+  institute: ["LIGO Scientific Collaboration and Virgo Collaboration"]
+  venue: "Conference talk based on Phys. Rev. Lett. 116, 061102 (2016)"
+  thesis: "This is the first direct detection of gravitational waves and the first observation of a binary black hole merger."
+  paper: "paper/paper.md"
+  lang: en
+  # A non-native speaker reading numbers runs 115-125 wpm. Planned at 125 until a stopwatch run.
+  wpm: 125
+  aspect: "16:9"
+  figdir: figs
+  # Estimates, not measured: letters read one by one count one word each; LIGO is read
+  # as one word; GW150914 is read "G W one-five-oh-nine-one-four" = 2 letters + 6 digits.
+  acronyms: {LIGO: 1, GW150914: 8, SNR: 3, H1: 2, L1: 2, UTC: 3, KAGRA: 1}
+
+slides:
+  - kind: title
+    cue: "Stand to the side of the screen. Wait for the room to settle."
+    say:
+      - "I am presenting this on behalf of the LIGO Scientific Collaboration and the Virgo Collaboration."
+      - "What the two LIGO detectors saw on September 14, 2015, why it points to two black holes merging, and why it is not noise."
+    pause: 1
+
+  - kind: figure
+    title: "Predicted in 1916, never caught directly"
+    diagram:
+      kind: flow
+      boxes:
+        - {label: "1916: Einstein predicts the waves"}
+        - {label: "1916: Schwarzschild, a black hole solution"}
+        - {label: "Binary pulsar: waves exist, seen indirectly"}
+        - {label: "2002 to 2011: first detectors, upper limits"}
+        - {label: "2015: Advanced LIGO observes", mark: a}
+      note: "The binary pulsar evidence is indirect: an orbit losing energy, not a wave measured at a detector."
+    bullets:
+      - "The waves were known to exist, but **no one had detected one directly, or seen two black holes merge**."
+    cue: "Walk the timeline left to right, then point at the last box."
+    say:
+      - "Einstein predicted these waves a century ago, and expected them to be remarkably small."
+      - "The binary pulsar found by Hulse and Taylor showed that they exist, through the energy its orbit loses."
+      - "But that is indirect. Nobody had measured the wave itself, and although many black hole candidates are known, no black hole merger had ever been observed."
+    pause: 2
+
+  - kind: figure
+    title: "Two detectors, one wave, 6.9 ms apart"
+    lead: "September 14, 2015, 09:50:45 UTC: LIGO Hanford (H1) and Livingston (L1)"
+    figure:
+      path: fig_1.png
+      crop: {x: 0.035, y: 0, w: 0.965, h: 0.29}
+      highlight:
+        - {x: 0.34, y: 0.24, w: 0.09, h: 0.70, label: "H1"}
+        - {x: 0.76, y: 0.24, w: 0.09, h: 0.70, label: "L1, with H1 laid on top"}
+      caption: 'Paper Fig. 1, top row. Strain in units of $10^{-21}$, filtered to 35-350 Hz for display.'
+    bullets:
+      - "The wave reached Livingston first; **shifted by 6.9 ms and inverted**, Hanford's trace lies on Livingston's."
+    foot: ['Peak strain $1.0 \times 10^{-21}$. Combined matched-filter signal-to-noise ratio: **24**.']
+    cue: "Point at the left box, then the right box. Let them compare the two traces for a second."
+    say:
+      - "09:50:45 UTC, September 14, 2015. Strain is the fractional change in length the wave causes; here it peaks at 1.0 times ten to the minus 21."
+      - "Look at the right panel. The blue line is Livingston. The orange line is Hanford, moved by 6.9 milliseconds and flipped, because the two detectors are oriented differently."
+      - "They lie on top of each other, within the 10 milliseconds light needs between the sites. Combined signal-to-noise ratio: 24."
+    ask:
+      - "Q: Why is the Hanford trace inverted? A: The two detectors have different relative orientations, so the same wave appears with opposite sign."
+    pause: 2
+
+  - kind: figure
+    title: "Watch the frequency climb"
+    figure:
+      path: fig_1.png
+      crop: {x: 0, y: 0.665, w: 1, h: 0.335}
+      highlight:
+        - {x: 0.32, y: 0.10, w: 0.13, h: 0.58}
+      caption: "Paper Fig. 1, bottom row: time-frequency map of the strain in H1 (left) and L1 (right)."
+    bullets:
+      - "In **0.2 s** the signal rises in frequency and amplitude, about **8 cycles from 35 to 150 Hz**, where the amplitude peaks."
+    cue: "Trace the bright track upward with your hand."
+    say:
+      - "Here is the same event as a time-frequency map. Brighter means more signal."
+      - "The track bends upward: the frequency and the amplitude both grow, in about 8 cycles, until the amplitude peaks near 150 hertz."
+      - "Two orbiting masses losing energy to gravitational waves do exactly this. They spiral in, and orbit faster."
+    pause: 2
+
+  - kind: content
+    title: "What is heavy and small enough to orbit at 75 Hz?"
+    formula: '$\mathcal{M} = \frac{(m_1 m_2)^{3/5}}{(m_1+m_2)^{1/5}} = \frac{c^3}{G}\left[\frac{5}{96}\pi^{-8/3} f^{-11/3}\dot f\right]^{3/5}$'
+    steps:
+      - 'From the frequency and its rise: chirp mass $\mathcal{M} \simeq 30\,M_\odot$.'
+      - 'So the total mass is $\gtrsim 70\,M_\odot$, and the two Schwarzschild radii add up to $\gtrsim 210$ km.'
+      - 'Equal point masses orbiting at 75 Hz would be only $\simeq 350$ km apart.'
+      - "Neutron stars are too light; a black hole with a neutron star would merge at a much lower frequency."
+    fine: ['$f$, $\dot f$: observed frequency and its time derivative. Masses in the detector frame. Schwarzschild radius $R_S = 2GM/c^2$. The orbit runs at half the gravitational-wave frequency of 150 Hz.']
+    cue: "Do not read the formula. Point at f and f-dot, then go down the steps."
+    say:
+      - "The formula needs only the frequency and how fast it rises. That gives a chirp mass of about 30 solar masses, so at least 70 in total, in the detector frame. A Schwarzschild radius R_S is 2GM over c squared."
+      - "The orbit runs at half the wave frequency, so a 150 hertz wave means 75 orbits per second. Put that much mass in such an orbit: two point masses would be only 350 kilometres apart, while their Schwarzschild radii alone add up to 210 kilometres."
+      - "Neutron stars do not have the mass. A black hole and a neutron star with this chirp mass would be far heavier in total, and would merge at a much lower frequency."
+    ask:
+      - "Q: Why 75 Hz and not 150 Hz? A: The orbital frequency is half the gravitational-wave frequency."
+    pause: 2
+
+  - kind: standout
+    lead: "What is left?"
+    flow:
+      - "at least 70 solar masses"
+      - "orbiting at 75 Hz, only about 350 km apart"
+      - "only black holes are that compact"
+    cue: "Pause three seconds before speaking. Let them read the last line."
+    say:
+      - "Black holes are the only known objects compact enough to reach that orbit without contact. So this is a binary black hole."
+    pause: 3
+
+  - kind: figure
+    title: "Inspiral, merger, ringdown: the wave general relativity predicts"
+    figure:
+      path: fig_2.png
+      crop: {x: 0, y: 0, w: 1, h: 0.66}
+      highlight:
+        - {x: 0.83, y: 0.52, w: 0.08, h: 0.36, label: "ringdown"}
+      caption: "Paper Fig. 2, top: strain in H1 without filtering, with numerical-relativity black hole horizons above."
+    bullets:
+      - "After the peak the wave dies away like **a single black hole settling down**, as a Kerr black hole should."
+    fine: ["Red: numerical relativity, confirmed to 99.9% by an independent calculation. Grey: reconstruction with black hole templates; in the paper's Fig. 1 it overlaps a model-free wavelet reconstruction by 94%."]
+    cue: "Point at the ringdown box last."
+    say:
+      - "The red line is a numerical relativity waveform for a system consistent with the measured parameters. An independent calculation confirms it to 99.9 percent."
+      - "The grey band is the signal reconstructed from the data with black hole templates. It is not the only reconstruction: one built from wavelets, with no astrophysical model, overlaps it by 94 percent."
+      - "Look at the end. After the peak, the wave decays like the damped oscillations of one black hole relaxing to a final, stationary Kerr black hole, the rotating kind."
+    pause: 2
+
+  - kind: columns
+    title: "The detector is a 4 km ruler for changes in length"
+    left:
+      width: 0.6
+      figure:
+        path: fig_3.png
+        highlight:
+          - {x: 0.71, y: 0.05, w: 0.10, h: 0.51, label: "100-300 Hz"}
+        caption: "Paper Fig. 3: Advanced LIGO (not to scale); inset (b) is the noise of each detector."
+    right:
+      parts:
+        - text: 'A passing wave changes the arm difference by $\Delta L = h L$, with $L = 4$ km.'
+        - bullets:
+            - "Arm cavities multiply the effect on the light phase **300** times."
+            - "**20 W** of laser becomes **700 W** on the beam splitter and **100 kW** in each arm."
+        - {size: fine, text: "Most sensitive band 100-300 Hz: 3 to 5 times better than initial LIGO there, more than ten times better below 60 Hz."}
+    cue: "Point at the two arms, then at the dip in the noise curve."
+    say:
+      - "Before asking whether this could be noise, here is the instrument: a Michelson interferometer with two 4 kilometre arms. A wave stretches one arm and squeezes the other."
+      - "Each arm cavity multiplies the effect 300 times; 20 watts of laser become 700 watts on the beam splitter and 100 kilowatts in each arm."
+      - "The noise curve on the right is lowest between 100 and 300 hertz, where these detectors are 3 to 5 times more sensitive than initial LIGO."
+    ask:
+      - "Q: How good is the calibration? A: Better than 10 percent in amplitude and 10 degrees in phase, one sigma; see backup."
+    pause: 2
+
+  - kind: figure
+    title: "Could the instrument or the ground have made it?"
+    diagram:
+      kind: flow
+      boxes:
+        - {label: "shake the detector on purpose: magnetic, radio, acoustic, vibration"}
+        - {label: "anything big enough to fake the signal shows on the sensors"}
+        - {label: "none did: at most 6% of the strain amplitude", mark: safe}
+      note: "Sensors at each site: seismometers, accelerometers, microphones, magnetometers, radio receivers, weather sensors, power-line monitors, a cosmic-ray detector."
+    bullets:
+      - "Both detectors ran steadily for hours around the event, and **no correlated disturbance** between the sites was found."
+    cue: "Ask the room: what would you check first? Then point at the green box."
+    say:
+      - "The obvious worry is that something local shook the mirrors."
+      - "Each site is covered with environmental sensors, and the team tested how the detectors respond to magnetic, radio, acoustic and vibration excitations. Anything strong enough to fake this signal would have shown up clearly."
+      - "None did. In the second that contained the event, environmental fluctuations could explain no more than 6 percent of the strain."
+      - "And nothing correlated turned up between the two sites."
+    pause: 2
+
+  - kind: figure
+    title: "Two searches that assume different things"
+    diagram:
+      kind: pipeline
+      rows:
+        - label: "Generic transient"
+          sub: "no waveform model"
+          stages:
+            - {label: "excess power", inner: ["time-frequency", "up to 1 kHz"]}
+            - {label: "one signal", inner: ["both detectors"]}
+            - {label: 'rank by $\eta_c$', inner: ["energy", "consistency"]}
+          out: "3 classes by shape"
+        - label: "Binary coalescence"
+          sub: "general relativity waveforms"
+          stages:
+            - {label: "templates", inner: ["about 250 000", "from GR"]}
+            - {label: "matched filter", inner: ["SNR", "chi-squared"]}
+            - {label: "coincidence", inner: ["15 ms", "same template"]}
+          out: "3 classes by template length"
+      takeaway: "Independent methods; their noise events are different and uncorrelated."
+    fine: ['$\eta_c$: coherent signal energy in both detectors, penalised by residual noise, so it measures SNR and agreement at once. $\hat\rho_c$: matched-filter SNR, down-weighted when a $\chi^2$ test says the data do not fit the template, added over both detectors. Generic classes: C1 shapes of known noise transients, C3 frequency rising with time, C2 the rest; each event is compared only with background of its own class.']
+    cue: "Top row, then bottom row. Stress 'no waveform model'."
+    say:
+      - "Two searches found the event, and they do not share assumptions."
+      - "The generic search needs no waveform model. Its statistic, eta-c, grows with the coherent signal energy and shrinks when the two detectors disagree."
+      - "The binary search matches about 250,000 general relativity waveforms. Its statistic, rho-hat-c, is the signal-to-noise ratio, reduced when a chi-squared test says the data do not fit the template."
+      - "Both sort events into three classes, so each event is judged only against background of its own kind."
+    pause: 2
+
+  - kind: figure
+    title: "How do you measure the noise when you cannot switch off gravity?"
+    diagram:
+      kind: flow
+      boxes:
+        - {label: "shift one detector's time stamps by much more than 10 ms"}
+        - {label: "a coincidence can now only be noise"}
+        - {label: "repeat: 608 000 years of background for the binary search", mark: a}
+      note: "A real signal in one detector can meet shifted noise in the other; that overestimates the background, so the significance is conservative."
+    bullets:
+      - "Estimate the background **empirically**: the noise is non-Gaussian and non-stationary, and no shield blocks gravitational waves."
+    cue: "Point at the middle box: this is the whole trick."
+    say:
+      - "How often does noise alone make something this loud? The noise is not Gaussian and changes over time, so it cannot be computed. And no shield blocks gravitational waves."
+      - "So one detector's data is slid in time by far more than the 10 milliseconds between sites; any coincidence left must be noise. About ten million such shifts give 608,000 years of background, from 16 days of data."
+      - "A real signal can still leak into this background, so the estimate errs on the conservative side."
+    pause: 2
+
+  - kind: figure
+    title: "Both searches put the event far out on the tail"
+    figure:
+      path: fig_4.png
+      highlight:
+        - {x: 0.39, y: 0.25, w: 0.06, h: 0.15, label: 'η = 20.0', label_at: above}
+        - {x: 0.92, y: 0.25, w: 0.06, h: 0.15, label: 'ρ = 23.6'}
+      caption: "Paper Fig. 4: candidates (markers) and mean background (lines); left generic, right binary search."
+    bullets:
+      - "In the binary search the event is **louder than any background event**, so only an upper bound on its false alarm rate exists."
+    fine: ["Purple: binary background without GW150914; against it the next strongest candidate has a false alarm rate of 1 per 2.3 years."]
+    cue: "Point at the right marker, then run your hand along the black background line to where it stops."
+    say:
+      - "Markers are candidates, lines are background. On the right, the event sits at 23.6, beyond every background event."
+      - "The flat tail is the event itself in one detector, paired with noise in the other. Without it, the purple line, the next strongest candidate has a false alarm rate of 1 per 2.3 years."
+      - "On the left, the generic search finds it as its strongest event, at 20.0, in the rising-frequency class C3. That shape requirement removes noise from the background. Drop it, and compare against noise of any shape, and four background events reach 32.1: the false alarm rate becomes 1 in 8,400 years, 4.4 sigma, still significant."
+    ask:
+      - "Q: What about the second event? A: False alarm rate 1 per 2.3 years, false alarm probability 0.02; if astrophysical, it is also a binary black hole merger."
+    pause: 2
+
+  - kind: standout
+    lead: "How often does noise alone make a gravitational-wave signal this strong?"
+    big:
+      - {value: '> 5.1$\sigma$', label: "binary coalescence", note: "false alarm rate below 1 in 203 000 years", mark: safe}
+      - {value: '4.6$\sigma$', label: "generic transient", note: "false alarm rate below 1 in 22 500 years", mark: safe}
+    gap: "two independent searches"
+    lines:
+      - "Confidently detected by both."
+    cue: "Put it up, wait three seconds, then speak."
+    say:
+      - "The binary search bounds the false alarm rate below 1 in 203,000 years, more than 5.1 sigma."
+      - "The generic search, with no waveform model at all, gives a false alarm rate lower than 1 in 22,500 years, 4.6 sigma."
+    ask:
+      - "Q: Is 5.1 sigma a measurement or a bound? A: A bound. No background event was as loud, so only an upper limit on the false alarm rate can be set."
+    pause: 3
+
+  - kind: columns
+    title: "Two black holes of about 36 and 29 solar masses became one of 62"
+    left:
+      width: 0.55
+      table:
+        header: ["Table I", "median, 90% interval"]
+        rows:
+          - ["Primary black hole mass", '36 (+5 / -4) $M_\odot$']
+          - ["Secondary black hole mass", '29 (+4 / -4) $M_\odot$']
+          - ["Final black hole mass", '62 (+4 / -4) $M_\odot$']
+          - ["Final black hole spin", "0.67 (+0.05 / -0.07)"]
+          - ["Luminosity distance", "410 (+160 / -180) Mpc"]
+          - ["Source redshift z", "0.09 (+0.03 / -0.04)"]
+        note: "Source-frame masses (detector frame = source frame x (1+z)); errors include waveform-model systematics."
+    right:
+      parts:
+        - bullets:
+            - '**3.0 (+0.5 / -0.5)** $M_\odot c^2$ went out as gravitational waves.'
+        - text: 'Peak luminosity 3.6 (+0.5 / -0.4) $\times 10^{56}$ erg/s, or 200 $M_\odot c^2$ per second.'
+        - {size: fine, text: "Primary spin below 0.7 (90% credible), so not maximally spinning; the secondary's spin is only weakly constrained."}
+    cue: "Point at the three mass rows, then at the 3.0 on the right."
+    say:
+      - "A Bayesian analysis with several waveform models gives source-frame masses; the detector-frame 70 earlier is larger by one plus the redshift. Thirty-six and twenty-nine solar masses went in, sixty-two came out. About three solar masses were radiated as gravitational waves."
+      - "At its peak the system radiated 3.6 times ten to the 56 erg/s, which is 200 solar masses of energy per second."
+      - "The primary's spin is below 0.7, so it is not maximally spinning. The source is about 410 megaparsecs away, redshift 0.09. All ranges are 90 percent credible intervals."
+    pause: 2
+
+  - kind: table
+    title: "Does it follow general relativity?"
+    table:
+      header: ["Test", "What it compares", "Result"]
+      rows:
+        - ["Final black hole", "mass and spin from the early stage vs. the late stage", "consistent"]
+        - ["Inspiral phase", "post-Newtonian coefficients allowed to deviate", "no evidence of violation"]
+        - ["Graviton", "a modified dispersion relation", '$\lambda_g > 10^{13}$ km, so $m_g < 1.2\times10^{-22}$ eV/$c^2$']
+      note: "The graviton bound beats Solar System and binary pulsar bounds, but not those from galaxy clusters and weak lensing."
+    foot: ["All three tests are **consistent with general relativity** in the strong-field regime."]
+    cue: "Read the result column top to bottom, then the note."
+    say:
+      - "Three checks. The final mass and spin from the early and the late part of the signal agree. The inspiral phase coefficients show no deviation."
+      - "And if the graviton had a mass, the waves would follow a modified dispersion relation. Its Compton wavelength λ must exceed ten to the 13 kilometres, so its mass is bounded below 1.2 times ten to the minus 22 electron volts. That beats the Solar System and binary pulsar bounds, but not those from galaxy clusters and weak lensing."
+    pause: 2
+
+  - kind: content
+    title: "What the black holes tell us"
+    bullets:
+      - "Stellar-mass black holes **heavier than about 25 solar masses exist**, and binary black holes **form in nature and merge within a Hubble time**."
+    foot: ['Merger rate: **2 to 400 per Gpc$^3$ per year**, depending on the mass model; only the lowest predicted rates are excluded.']
+    fine: ["Forming such heavy black holes from stars requires weak stellar winds, possible below about half the solar metallicity."]
+    cue: "One sentence, then the rate range. Do not overstate the rate."
+    say:
+      - "It shows that black holes of more than about 25 solar masses exist, and that binaries of them form and merge within a Hubble time."
+      - "The first rate estimates range from 2 to 400 mergers per cubic gigaparsec per year, depending on the mass model. Only the lowest predictions are excluded."
+      - "For stars to leave black holes this heavy, their winds must be weak, which is possible where metallicity is below about half the solar value."
+    pause: 2
+
+  - kind: columns
+    title: "What two detectors cannot tell us yet"
+    left:
+      width: 0.5
+      head: "Limits"
+      bullets:
+        - 'With only two detectors the source is localized to about **600 deg$^2$**.'
+        - "The secondary black hole's spin is only **weakly constrained**."
+        - "These are **16 days** of data; the full first run is reported later."
+    right:
+      head: "Next"
+      bullets:
+        - "Design sensitivity: binaries like this one at **3 times** the SNR."
+        - "Advanced Virgo, KAGRA and a possible LIGO detector in India improve position and parameters."
+    cue: "Left column first. Do not skip the limits."
+    say:
+      - "Three things this paper cannot say yet. Only LIGO was observing, so the sky position is an area of about 600 square degrees, fixed mainly by the arrival-time difference."
+      - "The spin of the smaller black hole is only weakly constrained. And these are 16 days of coincident data out of the first observing run."
+      - "At design sensitivity, such a binary would have three times the SNR, and Virgo, KAGRA and a planned detector in India will improve the positions."
+    pause: 2
+
+  - kind: standout
+    big: "The first direct detection of gravitational waves, and the first observation of a binary black hole merger."
+    cue: "Say it once, slowly. Then invite questions."
+    say:
+      - "The detected waveform matches general relativity's prediction for two black holes spiralling in, merging, and ringing down. This is the first direct detection of gravitational waves and the first observation of a binary black hole merger. Thank you."
+    pause: 3
+
+  - kind: table
+    backup: true
+    title: "Backup: every search puts GW150914 above 4.4 sigma"
+    table:
+      header: ["Search", "Statistic", "Background", "False alarm rate", "Probability", "Significance"]
+      rows:
+        - ["Binary coalescence", '$\hat\rho_c = 23.6$', "608 000 yr", "< 1 in 203 000 yr", '$< 2\times10^{-7}$', '$> 5.1\sigma$']
+        - ["Generic, class C3", '$\eta_c = 20.0$', "67 400 yr", "< 1 in 22 500 yr", '$< 2\times10^{-6}$', '$4.6\sigma$']
+        - ["Generic, C2+C3", '$\eta_c = 20.0$', "same events", "1 in 8 400 yr", '$5\times10^{-6}$', '$4.4\sigma$']
+        - ["Second event (binary)", "-", "without GW150914", "1 per 2.3 yr", "0.02", "-"]
+      size: small
+      note: "C3 includes a trials factor of 3. C2+C3 has four background events at 32.1 or more. A dash: the paper gives no value for that cell."
+    say:
+      - "If asked: rho-hat-c and eta-c are the ranking statistics of the binary and the generic search. Here are all the significance numbers for GW150914 from both, including the two-class generic search, where four background events reach 32.1, and the second strongest candidate."
+    pause: 0
+
+  - kind: table
+    backup: true
+    title: "Backup: the detector numbers behind the sensitivity"
+    table:
+      header: ["Quantity", "Value"]
+      rows:
+        - ["Arm length", "4 km"]
+        - ["Test masses", "40 kg fused silica"]
+        - ["Seismic isolation above 10 Hz", "more than 10 orders of magnitude"]
+        - ["Beam tube pressure", 'below 1 $\mu$Pa']
+        - ["Calibration (1 sigma)", "under 10% amplitude, 10 degrees phase"]
+        - ["Timing", 'GPS to better than 10 $\mu$s']
+      size: small
+    say:
+      - "If asked about the instrument: these are the detector numbers from the paper."
+    pause: 0
