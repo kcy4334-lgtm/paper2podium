@@ -7853,6 +7853,9 @@ class TwentyNinthTrial(unittest.TestCase):
         self.assertEqual(build_figs.LAST_CUT, set(), warn)     # the conclusion wraps without getting clipped
 
     def test_bars_legend_wraps_inside_a_narrow_figure(self):
+        import design
+        if design.font_family() == design.FALLBACK_FAMILY:
+            self.skipTest("deck font (Latin Modern Sans) not installed; the sizes depend on its metrics")
         import build_figs
         d = self._tmp()
         t = {"header": ["", "a long first series", "a longer second series", "third one"],
@@ -8080,6 +8083,9 @@ class ThirtiethTrial(unittest.TestCase):
 
     def test_negative_bar_values_shrink_instead_of_covering_each_other(self):
         """A negative number is one character wider for its sign, so in a narrow pane with three side-by-side bars, the value labels overlapped each other."""
+        import design
+        if design.font_family() == design.FALLBACK_FAMILY:
+            self.skipTest("deck font (Latin Modern Sans) not installed; the sizes depend on its metrics")
         import build_figs
         d = self._tmp()
         neg = {"header": ["", "one", "two", "three"],
@@ -9117,6 +9123,9 @@ class ThirtyFourthTrial(unittest.TestCase):
 
     def test_dot_labels_keep_a_connector_with_the_next_word(self):
         """"StyleGAN2 + ADA" used to wrap as "StyleGAN2 +" / "ADA," breaking the connector from its word."""
+        import design
+        if design.font_family() == design.FALLBACK_FAMILY:
+            self.skipTest("deck font (Latin Modern Sans) not installed; the sizes depend on its metrics")
         import build_figs
         import figs_extra
         from unittest import mock
@@ -9278,6 +9287,9 @@ class ThirtyNinthTrialTickGap(unittest.TestCase):
 class ThirtyNinthTrialSiblingSize(unittest.TestCase):
     def test_group_names_and_counts_share_one_size(self):
         """Trial 39 -- a one-cell group name and its long count were shrunk on their own, printing at a different size from their siblings."""
+        import design
+        if design.font_family() == design.FALLBACK_FAMILY:
+            self.skipTest("deck font (Latin Modern Sans) not installed; the sizes depend on its metrics")
         import build_figs
         d = {"kind": "pipeline", "rows": [{"label": "kitchen v2", "stages": [
             {"label": "recipes", "group": "1 choose the dishes", "count": "48", "inner": ["of top 900"]},

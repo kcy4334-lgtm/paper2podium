@@ -103,7 +103,7 @@ def _find_tex_font(name):
         pass
     for root in ("C:" + chr(92) + "texlive",
                  "C:" + chr(92) + "Program Files" + chr(92) + "MiKTeX",
-                 "/usr/share/texmf", "/usr/local/texlive",
+                 "/usr/share/texmf", "/usr/local/texlive", "/usr/share/fonts",
                  os.path.expanduser("~/.texlive")):
         g = glob.glob(os.path.join(root, "**", name), recursive=True)
         if g:
