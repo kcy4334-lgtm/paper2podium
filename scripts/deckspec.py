@@ -2510,3 +2510,11 @@ if __name__ == "__main__":
         sys.exit(0 if len(sys.argv) > 1 else 2)
     m, sl, np_ = load(sys.argv[1])
     print("OK: %d slide(s) · %d numbered page(s)" % (len(sl), np_))
+
+
+def relpath_or_abs(path, start):
+    """`os.path.relpath`, or the absolute path when the two are on different Windows drives."""
+    try:
+        return os.path.relpath(path, start)
+    except ValueError:
+        return os.path.abspath(path)

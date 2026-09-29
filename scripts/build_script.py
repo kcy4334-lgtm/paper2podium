@@ -207,7 +207,7 @@ def build(spec_path, out_path, pdf=None, wpm=None):
         # screen still exists.
         if th and s["n"] in th:
             L.append("")
-            L.append("![](%s)" % os.path.relpath(
+            L.append("![](%s)" % deckspec.relpath_or_abs(
                 th[s["n"]], os.path.dirname(out_path) or ".").replace("\\", "/"))
         # `note` is an action/tone cue. Putting it only in the deck's or PPTX's notes pane and
         # leaving it out of the script means it is missing from the paper the presenter holds.
@@ -233,7 +233,7 @@ def build(spec_path, out_path, pdf=None, wpm=None):
             L.append("## %s" % deckspec.plain(heading(s)))
             L.append("")
             if th and s["n"] in th:
-                L.append("![](%s)" % os.path.relpath(
+                L.append("![](%s)" % deckspec.relpath_or_abs(
                     th[s["n"]], os.path.dirname(out_path) or ".").replace("\\", "/"))
                 L.append("")
             # Main slides carried `note`/`cue`, but backup slides were missing them. Backup

@@ -943,7 +943,7 @@ def build(paper, out_path, syntax="latex", max_slides=None):
          "  # impact slides against it.",
          "  thesis: %s" % dq("TODO: the one claim, in the paper's own words"),
          "  # The paper itself. The checkers read its words and numbers from here.",
-         "  paper: %s" % dq(os.path.relpath(paper, os.path.dirname(os.path.abspath(out_path)))
+         "  paper: %s" % dq(deckspec.relpath_or_abs(paper, os.path.dirname(os.path.abspath(out_path)))
                             .replace(os.sep, "/")),
          "  wpm: 135",
          '  aspect: "16:9"',
