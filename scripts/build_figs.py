@@ -132,6 +132,11 @@ def role_ink(names):
 
 
 def _renderer(fig):
+    # `plt.close` swaps a closed figure's canvas for a bare `FigureCanvasBase`, which
+    #   cannot render. Give it an Agg canvas back instead of failing.
+    if not hasattr(fig.canvas, "get_renderer"):
+        from matplotlib.backends.backend_agg import FigureCanvasAgg
+        FigureCanvasAgg(fig)
     fig.canvas.draw()
     return fig.canvas.get_renderer()
 
@@ -147,7 +152,12 @@ def measurer():
     no matter which figure measures.
     """
     if _MEASURE[0] is None:
-        _MEASURE[0] = plt.figure(figsize=(4, 3))
+        # Not made through pyplot, so `plt.close("all")` elsewhere cannot take its
+        #   canvas away. It did in CI: every later width measurement failed.
+        from matplotlib.backends.backend_agg import FigureCanvasAgg
+        from matplotlib.figure import Figure
+        _MEASURE[0] = Figure(figsize=(4, 3))
+        FigureCanvasAgg(_MEASURE[0])
     return _MEASURE[0]
 
 

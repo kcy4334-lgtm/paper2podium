@@ -111,6 +111,21 @@ class CheckersAndFigures(unittest.TestCase):
             self.assertRegex(wide[0], r"only \d of 3 column\(s\) per panel fit, so all of them")
 
 
+class MeasuringSurvivesClose(unittest.TestCase):
+
+    def test_text_is_still_measured_after_the_canvas_is_taken_away(self):
+        """In CI, `plt.close("all")` in one test left the shared measuring figure with a bare
+        `FigureCanvasBase`, and every later width measurement raised AttributeError."""
+        import build_figs
+        from matplotlib.backend_bases import FigureCanvasBase
+        FigureCanvasBase(build_figs.measurer())
+        self.assertGreater(build_figs.text_w("some words", 10), 0)
+        fig = build_figs.plt.figure()
+        self.addCleanup(build_figs.plt.close, fig)
+        FigureCanvasBase(fig)
+        self.assertIsNotNone(build_figs._renderer(fig))
+
+
 class PagesAndClaims(unittest.TestCase):
 
     def test_pages_map_to_slides_with_and_without_a_title_slide(self):
