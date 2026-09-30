@@ -4709,7 +4709,9 @@ class EleventhRoundMeasureThenFix(unittest.TestCase):
         import deckspec
         pdf = self._log("[1]" + chr(10) + "[2]" + chr(10)
                         + "Overfull " + chr(92) + "vbox (14.4pt too high) detected" + chr(10) + "[3]")
-        slides = [{"n": 1}, {"n": 2}, {"n": 3}]
+        # Page 1 is always the title page, so page 3 is the third slide after it.
+        slides = [{"n": 1, "kind": "title"}, {"n": 2, "figure": "a.png"},
+                  {"n": 3, "figure": "b.png"}]
         deckspec.EXTRA_RESERVE.clear()
         self.addCleanup(deckspec.EXTRA_RESERVE.clear)
         before = deckspec.fig_reserve({"n": 3, "foot": ["x"]}, "self")
@@ -8649,8 +8651,10 @@ class ThirtySixthTrialSettle(unittest.TestCase):
 class TextBoundOverflow(unittest.TestCase):
     def test_a_figure_is_restored_when_shrinking_it_does_not_help(self):
         """Trial 37, defect 1 -- the left pane's text overflowed, yet the right-hand photo got shrunk twice while the overflow stayed unchanged."""
-        slides = [{"n": 1}, {"n": 2}]
-        seq = iter([[(1, 49.5), (2, 21.5)], [(1, 49.0), (2, 2.0)]])
+        # Pages 2 and 3: page 1 is the title page.
+        slides = [{"n": 0, "kind": "title"}, {"n": 1, "figure": "a.png"},
+                  {"n": 2, "figure": "b.png"}]
+        seq = iter([[(2, 49.5), (3, 21.5)], [(2, 49.0), (3, 2.0)]])
         old = deckspec.log_overfull
         deckspec.log_overfull = lambda _p: next(seq)
         try:

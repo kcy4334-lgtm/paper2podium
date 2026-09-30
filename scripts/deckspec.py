@@ -191,6 +191,26 @@ EXTRA_RESERVE = {}
 # so its figure is never shrunk again.
 LAST_OVER = {}
 TEXT_BOUND = set()
+# A slide with no figure at all. Its overflow is text from the first pass, so
+#   it is never fed back: two passes once went round shrinking nothing on a
+#   20-row backup table before saying so.
+NO_FIGURE = set()
+
+
+def slide_at_page(slides, page):
+    """The spec slide shown on PDF page `page` (1-based), or None for the title page.
+
+    `\\maketitle` always makes page 1 and every `kind: title` slide is folded into it.
+    Reading page i as the i-th spec slide was off by one in a spec with no title
+    slide, so an overflow was fed back to the wrong slide or dropped."""
+    pages = [None] + [s for s in slides if s.get("kind") != "title"]
+    return pages[page - 1] if 1 <= page <= len(pages) else None
+
+
+def has_figure(slide):
+    """Does the slide, or any of its panes, place a figure, chart or diagram?"""
+    return any((o or {}).get(k) for o in [slide] + [p for _, p in panes(slide)]
+               for k in ("figure", "chart", "diagram"))
 
 # The threshold (pt) for body overflow. Measured on one example deck: the
 # content slides there never overflowed past 6pt, and that's invisible
@@ -238,17 +258,20 @@ def log_overfull(pdf_or_log):
 def fit_from_log(pdf_or_log, slides):
     """Feeds the log's overflow back into that slide's figure slot. {slide number: inches}.
 
-    Page i is the spec's i-th slide (this skill renders one slide per
-    page). A small margin is added on top of the overflow so it lands
+    Pages map to slides through `slide_at_page` (one slide per page). A small margin is added on top of the overflow so it lands
     safely under the threshold. If a slide that's already been fed back
     still overflows, it stacks up, since some figures don't shrink enough
     in one pass.
     """
     got = log_overfull(pdf_or_log) or []
     for page, pt in got:
-        if 1 <= page <= len(slides):
-            n = slides[page - 1].get("n", page)
-            if n in TEXT_BOUND:
+        sl = slide_at_page(slides, page)
+        if sl is not None:
+            n = sl.get("n", page)
+            if n in TEXT_BOUND or n in NO_FIGURE:
+                continue
+            if not has_figure(sl):
+                NO_FIGURE.add(n)
                 continue
             prev = LAST_OVER.get(n)
             # if it shrank less than half of what was subtracted (inches -> pt), the figure isn't the cause

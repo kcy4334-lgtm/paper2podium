@@ -231,6 +231,7 @@ def build(spec, outdir, pptx=True, script=True, limit=None, qa=0):
     deckspec.EXTRA_RESERVE.clear()
     deckspec.LAST_OVER.clear()
     deckspec.TEXT_BOUND.clear()
+    deckspec.NO_FIGURE.clear()
     over = None
     _printed = set()
     for attempt in range(FIT_PASSES + 1):
@@ -261,6 +262,11 @@ def build(spec, outdir, pptx=True, script=True, limit=None, qa=0):
         if attempt == FIT_PASSES:
             break
         got = deckspec.fit_from_log(pdf, slides)
+        # Nothing left that a smaller figure could fix: another pass would only redraw.
+        _n = [deckspec.slide_at_page(slides, p_).get("n", p_) for p_, _ in over
+              if deckspec.slide_at_page(slides, p_) is not None]
+        if _n and all(n_ in deckspec.NO_FIGURE or n_ in deckspec.TEXT_BOUND for n_ in _n):
+            break
         print("   Body text overflowed on %d page(s): %s. Shrinking each of those slides' "
               "figure space by its overflow and drawing once more."
               % (len(over), ", ".join("p.%d %.1fpt" % x for x in over)))
@@ -269,11 +275,10 @@ def build(spec, outdir, pptx=True, script=True, limit=None, qa=0):
 
     wraps = deckspec.title_wraps(pdf)
     # Impact slides and the title slide have no title band. The `lead` above them would
-    # otherwise be flagged as "title wraps to two lines". The deck's pages follow the spec's
-    # slide order exactly.
-    _kinds = [s.get("kind") for s in slides]
+    # otherwise be flagged as "title wraps to two lines".
     wraps = [(n_, t_) for n_, t_ in wraps
-             if not (0 < n_ <= len(_kinds) and _kinds[n_ - 1] in ("standout", "title"))]
+             if (deckspec.slide_at_page(slides, n_) or {"kind": "title"}).get("kind")
+             not in ("standout", "title")]
     if wraps:
         print("   %d page(s) where the title wraps to two lines. It eats into body height:" % len(wraps))
         for n_, t_ in wraps:
@@ -288,10 +293,13 @@ def build(spec, outdir, pptx=True, script=True, limit=None, qa=0):
               "figure(s) were restored to their original size."
               % ", ".join("slide %s" % n_ for n_ in sorted(deckspec.TEXT_BOUND)))
         print("     What overflows is that slide's text (bullets or blocks in a panel, or `fine`).")
+    if deckspec.NO_FIGURE:
+        print("   Slide(s) with no figure that overflow: %s. There is no figure to shrink, "
+              "so they were not fed back."
+              % ", ".join("slide %s" % n_ for n_ in sorted(deckspec.NO_FIGURE)))
     if over:
-        print("   Still overflowing after %d feedback pass(es): %s" % (
-            FIT_PASSES, ", ".join("p.%d %.1fpt" % x for x in over)))
-        print("     Shrinking the figure further will not fix it: this slide has too much text.")
+        print("   Still overflowing: %s" % ", ".join("p.%d %.1fpt" % x for x in over))
+        print("     A smaller figure will not fix it: this slide has too much text.")
         print("     Cut `fine`/`foot` first, move it to `say`, or split the slide.")
 
     if pptx:

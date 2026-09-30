@@ -67,11 +67,15 @@ coverage_pattern: '&\s*(?:\\textbf\{)?(?:\\textminus)?(\d{1,2}\.\d+)'
 # coverage_appendix: true
 
 # ── Key claims: must appear in both the derivative and the source ─────────────
-# `source` pins the context the value appears in, not just the digits. Without it
-# you will match an unrelated number that happens to be the same.
-# Omit `source` to check for the bare value.
-# The pattern runs on the paper after its macros are expanded: write what
-# `\gopher` becomes (`\textit{Gopher}`), not the macro name.
+# Pin the words the value appears in, not just the digits. Without them you will
+# match an unrelated number that happens to be the same.
+# `context` is plain text copied from the paper as it reads. Math signs, braces,
+# `~` and LaTeX commands are ignored, so 'a drop of -12.3 points' matches
+# `a drop of $-12.3$~points`.
+# `source` is a regex instead, for when plain words are not enough. It runs on the
+# paper after its macros are expanded: write what `\gopher` becomes
+# (`\textit{Gopher}`), not the macro name.
+# With neither, the bare value is checked, and it must appear only once.
 claims:
-  - {label: headline result, value: "12.3", source: 'textminus12\.3'}
+  - {label: headline result, value: "12.3", context: 'a drop of -12.3 points'}
   - {label: second result,   value: "45.6", source: 'textminus45\.6'}

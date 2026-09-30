@@ -163,6 +163,7 @@ def from_spec(path):
                     # term early was the prior-work table. Looking only at the title
                     # would miss that slide.
                     "screen": " ".join(plain(x) for x in raw),
+                    "fig_words": " ".join(plain(x) for x in figure_words(s)),
                     # A version that keeps the markup, needed to check whether
                     # `<hit>`/`<safe>` are used
                     "raw_screen": " ".join(str(x) for x in raw),
@@ -252,6 +253,38 @@ def element_counts(s):
     if len(b) >= 3:
         out.append(("bullets", len(b)))
     return out
+
+
+_FIG_TEXT_KEYS = ("title", "note", "takeaway", "caption", "label", "sub", "text",
+                  "xlabel", "ylabel", "row_label", "col_label", "out", "col_notes",
+                  "verdict", "legend", "edge_names", "axis")
+
+
+def figure_words(s):
+    """Words drawn inside the slide's charts and diagrams. `deckcheck` H reads them from
+    the sidecar, so leaving them out here made the two checkers count the same word
+    differently."""
+    out = []
+
+    def walk(v, key=None):
+        if isinstance(v, dict):
+            for k, x in v.items():
+                walk(x, k)
+        elif isinstance(v, list):
+            for x in v:
+                walk(x, key)
+        elif isinstance(v, str) and key in _FIG_TEXT_KEYS:
+            out.append(v)
+    seen = []
+    for o in [s, s.get("left") or {}, s.get("right") or {}] + [p for _, p in deckspec.panes(s)]:
+        # A pane can come back from `panes` as well as from `left`/`right`.
+        if any(o is x for x in seen):
+            continue
+        seen.append(o)
+        for k in ("chart", "diagram"):
+            if isinstance(o.get(k), dict):
+                walk(o[k])
+    return [str(x) for x in out if x]
 
 
 def screen_text(s, with_tables=True):
@@ -1234,8 +1267,9 @@ def deck_words(slides):
     for s in slides:
         if s.get("backup"):
             continue
-        out += [s.get("title") or "", s.get("lead") or "",
-                s.get("screen") or ""]
+        # `screen` already holds the title and the lead. Adding them again counted a
+        #   title word twice.
+        out += [s.get("screen") or "", s.get("fig_words") or ""]
     return " ".join(out)
 
 

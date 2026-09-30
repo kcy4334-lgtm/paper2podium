@@ -598,6 +598,20 @@ SIDECAR_FIELDS = {"label", "panel", "note", "ylabel", "title", "takeaway",
                   "row_label", "col_label", "col_notes"}
 
 
+def plain_context(t):
+    """Text reduced to what a reader sees, for comparing a claim's `context` with the paper.
+
+    Math shifts, braces, thin spaces and command names go; the minus sign, en dash
+    and `\\textminus` all become `-`; case and runs of spaces are ignored. So
+    `a drop of 27.5 points` matches `a drop of $27.5$~points`."""
+    t = str(t or "")
+    t = re.sub(u"\\\\textminus\\s*|\u2212|\u2013|--", "-", t)
+    t = re.sub(r"\\[,;:! ]|~", " ", t)
+    t = re.sub(r"\\[A-Za-z]+\*?", " ", t)
+    t = re.sub(r"[${}\\]", "", t)
+    return re.sub(r"\s+", " ", t).strip().lower()
+
+
 def sidecar_text(s):
     """The sidecar: the first column is a figure name, so it's not text."""
     out = []
@@ -806,7 +820,16 @@ def run(S, out=None):
     for c in claims:
         v, lab = str(c["value"]), c["label"]
         in_d = has(deck + side, v) or has(spoken, v)
-        if c.get("source"):
+        if c.get("context"):
+            # Plain words copied from the paper as it reads. Writing a regex against
+            #   the LaTeX source (`a drop of \$27\.5\$`) was the only way before, and
+            #   escaping `$` and `\` is easy to get wrong.
+            _raw_s = getattr(S, "source_raw", "") or ""
+            _ctx = plain_context(c["context"])
+            in_s = any(_ctx in plain_context(t_) for t_ in
+                       (source, _raw_s, _unescape(source), _unescape(_raw_s)))
+            note = "" if in_s else "  <- `context` not found in the paper as written"
+        elif c.get("source"):
             # LaTeX's escaped characters (`\&`, `\%`, `\_`) are also
             #   looked for in the unescaped version, or a pattern that copied
             #   the manuscript's "Kale \& Kumar" verbatim would match in neither version.

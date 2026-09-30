@@ -2129,8 +2129,17 @@ def draw_pipeline(d, path, slot=None, warn=None):
                 bh_f = fd_u * (_bx / _tot)
                 _round(ax, fx, fy0, fw, bh_f, design.SURFACE, xs, ys,
                        zorder=2, edge=design.line_of("a"), lw=design.HAIR)
-                _arrow_at(ax, (fx + fw / 2.0, fy0 + bh_f),
-                          (fx + fw / 2.0, by), weight="faint")
+                # The arrow climbs through the count line. Down the middle it ran
+                #   straight through the count text ("12 sensors"), so when the stage
+                #   has a count the arrow moves into the clear strip beside it.
+                _ax_x = fx + fw / 2.0
+                if s.get("count"):
+                    _cw = text_w(strip_markup(str(s["count"])), _cpt) / xs
+                    _side = (fw - _cw) / 2.0
+                    if _side > 0.12 / xs:
+                        _ax_x = fx + _side / 2.0
+                _arrow_at(ax, (_ax_x, fy0 + bh_f),
+                          (_ax_x, by), weight="faint")
                 # The name sits (margin/2 + name/2) down from the top of the box.
                 # An input with no subtitle is centered: box height is the same across rows.
                 _ly = (fy0 + bh_f * (1.0 - (FEED_PAD / 2 + FEED_LAB / 2) / _bx)
@@ -3019,6 +3028,12 @@ def draw_bars(t, path, title=None, ylabel=None, note=None, slot=None,
             #   was fixed. The arrow comes in from the text's side, so it's
             #   offset by half that width in that direction.
             _vl = _vstr(cs, bi, bv) if values else ""
+            # A callout that only repeats the printed value adds a second copy of the same number.
+            _norm = lambda t: re.sub(u"[−–]", "-", re.sub(r"\s", "", strip_markup(str(t))))
+            if warn is not None and _vl and _norm(txt) == _norm(_vl):
+                warn.append("%s: `callout.text` %r repeats the value already printed on that bar. "
+                            "Say what the value means instead (\"the gap closes\"), or drop the callout."
+                            % (tag, txt))
             _half = (text_w(_vl, vfs, "bold") * xu / 2.0 + 0.05) if _vl else 0.0
             # Half the text's height: ending it at the floor would let an arrow coming from below cut across the corner
             _axh = max(0.2, ax.get_position().height * slot[1])
@@ -3031,7 +3046,8 @@ def draw_bars(t, path, title=None, ylabel=None, note=None, slot=None,
             #   instead points at the spot where it starts from the
             #   baseline: calling out one bar still means the same thing,
             #   just a shorter arrow.
-            if (top_free and bv < 0) or (not top_free and bv > 0):
+            _flip = (top_free and bv < 0) or (not top_free and bv > 0)
+            if _flip:
                 _ty = (0.03 if top_free else -0.03) * span
                 _tx = bx
             # The text must sit at least two lines away from the called-out
@@ -3041,7 +3057,11 @@ def draw_bars(t, path, title=None, ylabel=None, note=None, slot=None,
             #   isn't enough room, the axis grows.
             _line = ((fs - 1) / 72.0) / _axh * span
             _rad = 0.12
-            if top_free and bv >= 0:
+            # A bar pointing away from the open band is called out at its base.
+            #   Coming in at an angle, that arrow ran across the neighbouring
+            #   bar's value label ("+0.0" next to a long negative bar), so it drops
+            #   straight down too.
+            if top_free and (bv >= 0 or _flip):
                 # Placed directly above the called-out bar. Placing it in
                 #   the topmost band once, when calling out a short bar,
                 #   covered a neighboring tall bar's value (21.0) and the
@@ -3052,8 +3072,11 @@ def draw_bars(t, path, title=None, ylabel=None, note=None, slot=None,
                 _half_bar = w * 0.46
                 _tops = [v + _lab_h for pts_ in bar_xy.values() for (x_, v) in pts_
                          if x_ + _half_bar >= tx - tw / 2 and x_ - _half_bar <= tx + tw / 2]
-                _tops.append(bv + _lab_h)
-                _tx, _ty = bx, bv + _lab_h * 0.95
+                if _flip:
+                    _tops.append(_ty)
+                else:
+                    _tops.append(bv + _lab_h)
+                    _tx, _ty = bx, bv + _lab_h * 0.95
                 # Floats just enough for the arrow to be visible: calling out the tallest bar once put the text right against its value
                 ty = max(max(_tops) + 1.3 * _line, _ty + 2.75 * _line)
                 _rad = 0.0
@@ -3124,6 +3147,21 @@ def draw_bars(t, path, title=None, ylabel=None, note=None, slot=None,
                     ax.set_ylim(lo_ - (abx.y0 + 4 - cb.y0) * _upp, hi_)
                 elif cb.y1 > abx.y1 - 2:
                     ax.set_ylim(lo_, hi_ + (cb.y1 - abx.y1 + 4) * _upp)
+                # The loop above moves only the text. The arrow can still cross a
+                #   value label, and nothing downstream sees inside the PNG.
+                if warn is not None and _an.arrow_patch is not None:
+                    fig.canvas.draw()
+                    _r = fig.canvas.get_renderer()
+                    ab = _an.arrow_patch.get_window_extent(_r)
+                    _own = _vtext.get((cs, bi))
+                    _hit = [v.get_text() for v in _vtext.values() if v is not _own
+                            for lb in [v.get_window_extent(_r)]
+                            if min(lb.x1, ab.x1) - max(lb.x0, ab.x0) > 1
+                            and min(lb.y1, ab.y1) - max(lb.y0, ab.y0) > 1]
+                    if _hit:
+                        warn.append("%s: the callout arrow crosses the value label %s. "
+                                    "Point at another series, or shorten `callout.text`."
+                                    % (tag, " / ".join(repr(h) for h in _hit)))
             seen.append((round(float(fs - 1), 2), txt))
 
     if title:
@@ -3346,10 +3384,37 @@ def panel_tables(slide, ch):
     return out
 
 
+# The same test `prose_audit` uses for "does this slide say what a blank cell means".
+EXPLAINS_BLANK = re.compile(
+    r"dash|not\s+(run|tested|measured|applicable)|blank|empty|"
+    u"(^|[\\s(])([\\-–—]|n/?a)\\s*[:=]", re.I)
+
+
+def blanks_said(s):
+    """Does the slide say, anywhere on screen, what a blank cell means?"""
+    txt = []
+
+    def walk(v):
+        if isinstance(v, dict):
+            for x in v.values():
+                walk(x)
+        elif isinstance(v, list):
+            for x in v:
+                walk(x)
+        elif isinstance(v, str):
+            txt.append(v)
+    for k in ("title", "fine", "foot", "note", "bullets", "chart", "table", "left", "right", "parts"):
+        walk(s.get(k))
+    return bool(EXPLAINS_BLANK.search(strip_markup(" ".join(txt))))
+
+
 def draw_tiles(panels, path, title=None, note=None, slot=None, warn=None,
                col_notes=None, row_label=None, col_label=None,
-               verdict=None, takeaway=None, share_rows=False):
+               verdict=None, takeaway=None, share_rows=False, blanks_said=False):
     """One tile grid, or several placed side by side. `panels` = [(title, table), ...].
+
+    `blanks_said`: the slide says what a blank cell means ("-: not tested"). Then a
+    mostly blank row is a design fact, not clutter, and is not flagged.
 
     Bands (title, panel name, axis name, header, subtitle, caption) are all
     measured in inches first, then stacked top to bottom. Building it by
@@ -3389,7 +3454,7 @@ def draw_tiles(panels, path, title=None, note=None, slot=None, warn=None,
                 % (tag, len(_real), _mk, _mk))
     # A row that's mostly dashes shrinks every tile. Giving up space for
     #   blank cells shrank the numbers in the cells that carry the argument.
-    if warn is not None and nr > 2:
+    if warn is not None and nr > 2 and not blanks_said:
         for _pt, _tb in panels:
             for _r in _tb["rows"]:
                 _cells = [strip_markup(str(c)).strip() for c in _r[1:]]
@@ -3397,9 +3462,11 @@ def draw_tiles(panels, path, title=None, note=None, slot=None, warn=None,
                             if not c or c in BLANK_CELLS)
                 if len(_cells) >= 2 and _dash * 2 > len(_cells):
                     warn.append(
-                        u"%s: tile row \"%s\" has %d of %d cells blank: keep only the row "
-                        u"the argument compares and send this row to `fine` or a backup table. "
-                        u"Every tile shrinks to make room for the blank cells."
+                        u"%s: tile row \"%s\" has %d of %d cells blank, and every tile shrinks "
+                        u"to make room for them. If the argument does not compare this row, send "
+                        u"it to `fine` or a backup table. If the blanks are part of the design "
+                        u"(combinations that were not run), keep the row and say so on the slide "
+                        u"(\"-: not tested\"), which also silences this."
                         % (tag, strip_markup(str(_r[0])), _dash, len(_cells)))
     nc = max([len(x) for x in heads] or [1]) or 1
     has_ptitle = any(ttl for ttl, _ in panels)
@@ -3546,13 +3613,18 @@ def draw_tiles(panels, path, title=None, note=None, slot=None, warn=None,
             #   knowing what to cut, and naming the wrong dimension makes them fix the wrong thing.
             bits = []
             if wide:
-                per = (slot[0] / np_ - axis_w - lab_w - 0.06)
-                fits = max(0, int(per / max(0.2, cell_w)))
-                bits.append("width falls short by %.2f inches: up to %d column(s)%s fit. "
+                # Counted at the floor size. Counting with the shrunk cells said
+                #   "up to 1 column fits" while all three were drawn, below the floor.
+                _fl = measure(FLOOR_PT, tight=True)
+                per = (slot[0] / np_ - _fl[5] - _fl[3] - 0.06)
+                fits = min(nc, max(0, int(per / max(0.2, _fl[4]))))
+                bits.append("width falls short by %.2f inches: at %gpt, the size aimed for, only %d of %d "
+                            "column(s)%s fit, so all of them are drawn smaller. "
                             "Flipping rows and columns usually fixes it, but if the "
                             "reading direction (read by row, or by column) is itself the "
                             "argument, don't flip it; shorten the names or split into panels instead"
-                            % (floor_w - slot[0], fits, " per panel" if np_ > 1 else ""))
+                            % (floor_w - slot[0], FLOOR_PT, fits, nc,
+                               " per panel" if np_ > 1 else ""))
             if tall:
                 # Says to shrink the band before the row count: there's
                 # something droppable before giving up the data itself.
@@ -4267,7 +4339,8 @@ def build(spec_path, out_dir, sidecar_path=None):
                                   _slot_for(s, where, "chart"), warn,
                                   ch.get("col_notes"), ch.get("row_label"),
                                   ch.get("col_label"), ch.get("verdict"),
-                                  ch.get("takeaway"), ch.get("share_rows"))
+                                  ch.get("takeaway"), ch.get("share_rows"),
+                                  blanks_said=blanks_said(s))
                 made.append(p)
                 sizes += [(os.path.basename(p), pt, txt) for pt, txt in seen]
                 tag = "chart%02d" % s["n"]
@@ -4307,7 +4380,7 @@ def build(spec_path, out_dir, sidecar_path=None):
                                   ch.get("note"), slot, warn,
                                   ch.get("col_notes"), ch.get("row_label"),
                                   ch.get("col_label"), ch.get("verdict"),
-                                  ch.get("takeaway"))
+                                  ch.get("takeaway"), blanks_said=blanks_said(s))
             elif kind == "heat":
                 seen = draw_heat(t, p, ch.get("title"), ch.get("note"),
                                  slot, warn, ch.get("takeaway"))

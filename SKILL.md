@@ -470,7 +470,7 @@ but the output is wrong, or before changing any checker. The four that recur mos
 
 | Transfers (this skill) | Per-project, every time |
 |---|---|
-| Pipeline order and dependency chain | The claim list and its regexes |
+| Pipeline order and dependency chain | The claim list and the words that pin each value (`context`) |
 | Sidecar · two-way check · reverse coverage | The banned-wording list |
 | Timing model | Figure generators (tied to your raw data) |
 | The three prose measurements | Acronym word-equivalents (measure them) |
