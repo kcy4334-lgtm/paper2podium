@@ -126,6 +126,24 @@ class MeasuringSurvivesClose(unittest.TestCase):
         self.assertIsNotNone(build_figs._renderer(fig))
 
 
+class NameGrid(unittest.TestCase):
+
+    def test_a_grid_of_combination_names_is_flagged_and_a_drawn_one_is_not(self):
+        """Twice the design's two factors were shown only as a grid of pair names. The same
+        grid shape holding what happens in each cell is a real drawing and is left alone."""
+        import prose_audit
+        names = {"n": 4, "title": "A route is two choices", "diagram": {
+            "kind": "grid", "rows": ["express", "local"], "cols": ["morning", "evening"],
+            "boxes": [{"label": "morning express"}, {"label": "evening express"},
+                      {"label": "morning local"}, {"label": "", "mark": "blank"}]}}
+        drawn = {"n": 5, "title": "Where the bus waits", "diagram": {
+            "kind": "grid", "rows": ["express", "local"], "cols": ["morning", "evening"],
+            "boxes": [{"label": "2 stops"}, {"label": "3 stops"},
+                      {"label": "9 stops"}, {"label": "12 stops"}]}}
+        got = prose_audit.name_grids([names, drawn])
+        self.assertEqual([n for n, _ in got], [4])
+
+
 class PagesAndClaims(unittest.TestCase):
 
     def test_pages_map_to_slides_with_and_without_a_title_slide(self):

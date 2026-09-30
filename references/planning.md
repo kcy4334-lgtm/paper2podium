@@ -17,8 +17,8 @@ decide that from the paper alone.
 - Showing what the result is about — §object the object · §insides the objects side by
   side · §structure a structure that is not a row · §matrix a matrix in tiles · §factors
   one drawing per factor
-- Setting up the question — §question the assumption · §prior prior work · §turn the turn ·
-  §answer the answer that changes
+- Setting up the question — §stake why the choice matters · §question the assumption ·
+  §prior prior work · §turn the turn · §answer the answer that changes
 - Closing — §closing explanations, rules, limits, the last sentence
 §title-page — The title page
 §plan — Write the plan down
@@ -77,14 +77,16 @@ puts it (a result before the setup). Keep the paper's order inside each link, an
 the move in `plan.md`. Some common shapes, as a starting point only:
 
 - **A controlled comparison or ablation, result first.** The paper changes some settings
-  on purpose, holds the rest fixed, and measures what moves. Open on the headline result,
-  drawn so its shape states the claim (§table). Then show how it was measured: what was
+  on purpose, holds the rest fixed, and measures what moves. Open on why the choice
+  matters, if the introduction says (§stake), and then the headline result, drawn so its
+  shape states the claim (§table). Then show how it was measured: what was
   compared and what was held fixed (§insides, with the definitions in `fine`). Then the
   doubt the audience is forming, and the check that answers it (§objection). Then what the
   result does not cover (§closing, limits), and the last sentence. A concept gets a slide
   only when the headline cannot be read without it, and then just before the headline.
 - **A controlled comparison, factor by factor.** Use this when the paper varies several
-  factors and reports each one's effect in its own paragraph. For each factor in turn:
+  factors and reports each one's effect in its own paragraph. First why the choice
+  matters, if the introduction says (§stake). Then, for each factor in turn:
   first what it is (one drawing, §factors), then what it does (§table), then where the
   paper hedges it (§objection, or the sentence that limits it). Then the synthesis: which
   factor matters most, or what happens when they act together (§part-whole). Then rules
@@ -430,24 +432,51 @@ reaching for tiles.
 - **Signal:** the results are organised by two or more independent factors (a table whose
   columns group by one choice and rows by another; a design that crosses two settings).
 - **Slide:** a drawing of what each factor does, not its name, before the first number that
-  depends on it. Use one slide per factor when each needs its own picture, and one slide
-  for both when a single drawing shows them together (a `grid` with one factor on each
-  axis). Where it goes depends on the arc: all factors up front, or each just before its
-  own result.
+  depends on it. Draw the thing the factor changes, in its two or three settings, from the
+  paper's own definition: which values each option can take, what is shared, what is kept.
+  Usually that is one slide per factor. Where it goes depends on the arc: all factors up
+  front, or each just before its own result.
+  - A `grid` with one factor on each axis and the combinations' names in the cells shows
+    which combinations exist, not what either factor does. It can follow the drawings as
+    a map of the design (with the untested cells blank), but it does not replace them.
+  - Test: cover the labels. If what is left says nothing about either factor (plain
+    boxes in rows and columns), the slide is a list of names.
   - Example: a study of bus delays by route and by hour. The routes as a map; the day as
     a `flow` with the rush hours marked.
   - The title can ask (*"Where does the bus go?"*), point (*"Watch the rush hours"*), or
     count off the factors (*"First: where the bus goes"*). The last is one option, not
     the rule.
-  - Pick the diagram by what the factor is: a `grid` for two crossed choices, a `flow` for
-    a sequence, a `strip` for a row of named cells ([layouts.md](layouts.md)).
+  - Pick the diagram by what the factor is: a `flow` for a sequence, a `strip` for how
+    things are grouped or shared along a row, a `grid` for a layout in two dimensions
+    ([layouts.md](layouts.md)).
   - A `takeaway` inside the figure, and a `foot` that names the term the paper uses.
-- **Common failure:** one grid listing the combinations by name. It shows which combinations
-  exist, not what each factor does.
+- **Common failure:** one grid listing the combinations by name, as the only picture of
+  the factors. The audience learns the names and still cannot say what either factor
+  changes. `prose_audit` flags such a grid.
 
 ---
 
 ## Setting up the question
+
+### §stake — Why the choice matters, before the first case.
+- **Signal:** the introduction opens on where the thing is used and what a wrong choice
+  costs there: a limit it must fit (a budget, a device, a shift), and what fails in the
+  world when it does not.
+- **Slide:** one slide, before the first case or question. The object as the audience
+  would meet it (a `pipeline`, or the paper's figure of the system), a `lead` that says
+  where it runs and what limits it, and one line on what a wrong choice costs, in the
+  paper's words. A photograph of the setting from the paper can sit in the band under the
+  diagram.
+  - Example: a bakery that must fit its baking into one shift. The line `mix → proof →
+    bake`, the lead "One oven, eight hours", and the cost: "a batch that misses the shift
+    is a day's bread thrown away."
+  - This is often the §object slide with the stake added. Then it is one slide, not two.
+  - Prior work does not go here (§prior).
+- **Common failure:** opening on the case or the headline. A failure shown before the
+  audience knows why anyone would run the system that way reads as a curiosity, not a
+  problem, and the introduction's first paragraph never reaches the room.
+- If the introduction gives no stake (a theory paper that opens on its definition), do not
+  invent one.
 
 ### §question — The assumption, as a question.
 - **Signal:** the thesis goes against something the audience assumes (more rain means more

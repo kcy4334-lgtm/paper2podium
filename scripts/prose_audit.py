@@ -1233,6 +1233,55 @@ def flat_diagrams(slides):
     return total, flat
 
 
+_NAME_STOP = {"per", "of", "the", "a", "an", "and", "or", "in", "on", "by", "with", "for",
+              "to", "no", "one", "all", "each"}
+
+
+def _name_tokens(name):
+    return [t for t in re.findall(r"[a-z0-9][a-z0-9.+-]*", plain(str(name)).lower())
+            if len(t) > 1 and t not in _NAME_STOP]
+
+
+def name_grids(slides):
+    """`grid` diagrams whose cells only name the row-and-column combination. [(slide, title)].
+
+    Two blind trials drew a design's two factors this way and nothing else: rows of one
+    factor, columns of the other, each cell the name of the pair. The slide says which
+    combinations exist and nothing about what either factor does (planning §factors).
+    A cell counts as a name when it repeats a word of its row or column name; the grid is
+    flagged when two thirds of its filled cells do. It may be fine as a map of the design
+    after the factors are drawn, so this is advice, not a failure."""
+    out = []
+    for s in slides:
+        if s.get("backup"):
+            continue
+        for where in ("self", "left", "right"):
+            owner = s if where == "self" else (s.get(where) or {})
+            d = owner.get("diagram")
+            if not isinstance(d, dict) or d.get("kind") != "grid":
+                continue
+            rows, cols = list(d.get("rows") or []), list(d.get("cols") or [])
+            boxes = list(d.get("boxes") or [])
+            if len(rows) < 2 or len(cols) < 2:
+                continue
+            filled = named = 0
+            for i, b in enumerate(boxes):
+                b = b if isinstance(b, dict) else {"label": b}
+                lab = plain(str(b.get("label") or "")).lower()
+                if not lab.strip() or b.get("mark") == "blank":
+                    continue
+                r, c = divmod(i, len(cols))
+                if r >= len(rows):
+                    break
+                filled += 1
+                toks = _name_tokens(rows[r]) + _name_tokens(cols[c])
+                if any(t in lab for t in toks):
+                    named += 1
+            if filled >= 3 and named * 3 >= filled * 2:
+                out.append((s.get("n"), str(s.get("title") or "")[:46]))
+    return out
+
+
 def paper_text(meta, spec_path):
     """The text of the source of truth `meta.paper` points to. (None, reason) if
     missing or unreadable.
@@ -1545,6 +1594,14 @@ def main(path):
             print("      a different box yourself if this one is wrong.)")
         print("     (`looking.md` §5 only says \"use color sparingly.\" Using it")
         print("      sparingly and not using it at all are different things.)")
+
+    for n_, ttl in name_grids(slides):
+        print()
+        print("   ! slide %s: a grid whose cells name each row-and-column pair (%s)." % (n_, ttl))
+        print("     It shows which combinations exist, not what either factor changes.")
+        print("     Draw each factor first (planning §factors): the thing it changes, in its")
+        print("     settings, from the paper's definition. Keep this grid after them as a")
+        print("     map of the design, or drop it.")
 
     _sd = os.path.dirname(os.path.abspath(path))
     _fd = str((spec_meta(path) or {}).get("figdir") or "figs")
