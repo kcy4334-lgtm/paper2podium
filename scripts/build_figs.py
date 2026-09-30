@@ -1085,6 +1085,47 @@ def draw_strip(d, path, slot=None, warn=None):
     #   estimate is only issued when the figure has an actual problem (text
     #   doesn't fit, a line is too short). Height is still issued as is: if
     #   height falls short, the canvas grows and LaTeX shrinks the whole thing.
+    # A height-bound strip gets advice worked out from its own bands. The generic
+    #   "drop lines, subtitle, `note`, or `fine`" told one deck to drop the row notes
+    #   another warning had just asked for (identical bars), and dropping `fine` gained
+    #   0.09 inches: the text stayed at 6.5pt.
+    BOUND.pop((tag, "hint"), None)
+    # Secondary text (group names, notes) is drawn 2pt under the body, so 7pt on
+    #   screen means the body at 9pt. Measured the way `fs` was chosen above.
+    _wh = measure(min(BODY_PT, WARN_PT + 2.0))
+    if _wh[1] > slot[1] + 1e-6 and BOUND.get((tag, "*")) == "h":
+        _Bw = _wh[5]
+        _need = _wh[1] - slot[1]
+        _same = (len(rows) > 1 and all(r.get("bars") and r.get("groups") for r in rows)
+                 and len(set(int(r["bars"]) for r in rows)) == 1)
+        cuts = []
+        if _Bw.get("note"):
+            cuts.append((_Bw["note"], "move `takeaway`/`note` out of the figure (to the slide's `lead`)"))
+        if any_note and not _same:
+            cuts.append((_Bw["rnote"] * sum(1 for r in rows if r.get("note")), "drop the row notes"))
+        if any_outer:
+            cuts.append((_Bw["outer"] * sum(1 for r in rows if r.get("outer")),
+                         "say the `outer` band in that row's note instead"))
+        per_row = max(_Bw["group"] + _Bw["strip0"] + _Bw["rnote"] + _Bw["gap"], 0.01)
+        got, said = 0.0, []
+        for inch, what in sorted(cuts, reverse=True):
+            if got >= _need:
+                break
+            got += inch
+            said.append(what)
+        if said and got >= _need:
+            hint = u" and ".join(said)
+        else:
+            hint = (u"%s, and it still needs %.2f inches more: cut %d row(s) or split the slide"
+                    % (u" and ".join(said) if said else u"nothing inside the figure is optional",
+                       max(0.0, _need - got),
+                       max(1, int(math.ceil((_need - got) / per_row)))))
+        BOUND[(tag, "hint")] = (
+            u" — height decides it: for 7pt it needs %.2f inches more than its %.2f. "
+            u"To reach 7pt: %s.%s"
+            % (_need, slot[1], hint,
+               u" Keep the row notes: the bars are identical, so the notes are what tells "
+               u"the rows apart." if (_same and any_note) else u""))
     _outer, _pend = warn, None
     if floor_w > slot[0] + 1e-6 or floor_h > slot[1] + 1e-6:
         if warn is not None:

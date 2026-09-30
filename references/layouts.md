@@ -345,7 +345,8 @@ when an edge slices through labels (name fragments are left on the slide) or thr
 filled band (a colour bar without its tick numbers cannot be read). Widen the crop, or
 keep the colour bar whole.
 
-An image that is not data at all (a map of the sites, a photograph of the apparatus) has
+An image that is not data at all (a map of the sites, a photograph of the apparatus, the
+paper's drawing of its system that planning §object tells you to use as it is) has
 nothing to redraw. Say so with `picture: "map of the two sites"`. The reason is required,
 and `prose_audit` then stops asking you to redraw it:
 

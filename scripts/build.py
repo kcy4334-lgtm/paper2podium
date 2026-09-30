@@ -82,6 +82,9 @@ def _why_small(fig, texts):
         return ""
     # When a string has no record of its own, fall back to the record for the whole figure
     # (figures that fix font size before drawing: strip, pipeline, tiles)
+    # A figure that worked out its own advice from its bands (strip) says it here.
+    if build_figs.BOUND.get((fig, "hint")):
+        return build_figs.BOUND[(fig, "hint")]
     got = [build_figs.BOUND.get((fig, t[:48])) or build_figs.BOUND.get((fig, "*")) for t in texts]
     w, h = got.count("w"), got.count("h")
     if not (w or h):

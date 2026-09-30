@@ -443,6 +443,10 @@ def unspoken_terms(slides):
 
     seen, out = set(), []
     for s in slides:
+        # A backup slide is shown only when a question calls for it, and the answer is
+        #   spoken then. It has no timed script, so its terms were flagged as never said.
+        if s.get("backup"):
+            continue
         for w in JARGON.findall(s.get("screen") or s.get("title", "")):
             if not looks_like_jargon(w) or _said(w) or w in seen:
                 continue
@@ -467,6 +471,8 @@ def unspoken_terms(slides):
     common_abbr = {"fig", "figs", "eq", "eqs", "tab", "no", "vs", "al", "eg", "ie", "dr",
                    "mr", "ms", "sec", "ref", "refs", "approx", "resp", "cf", "etc"}
     for s in slides:
+        if s.get("backup"):
+            continue
         face = s.get("screen") or s.get("title", "")
         for ch in sorted(set(re.findall(u"[Ͱ-Ͽ]", face))):
             nms = greek_name.get(ch, set())
@@ -1385,8 +1391,9 @@ def standouts_off_thesis(slides, thesis):
             continue
         # Question slides are excluded. planning's §question says not to put the
         # conclusion's words on that slide, so judging claim overlap there would
-        # collide with that guideline.
-        if "?" in " ".join([str(s.get("lead") or ""), str(s.get("title") or "")]):
+        # collide with that guideline. The question can sit in `lines` or `big` as
+        # well as the lead; looking only at the lead and title flagged one there.
+        if "?" in _standout_words_text(s):
             continue
         got = _words(_standout_words_text(s))
         out.append((s.get("n"), sorted(want & got), (s.get("title") or "")))
@@ -1623,7 +1630,8 @@ def main(path):
         # declaration) even for a numeric-image figure like a scatter plot.
         print("     A data figure whose values aren't in the manuscript can mark where to look with")
         print("     `highlight`, which drops it from this list. `picture:` declares a non-data figure")
-        print("     (photo, map, device); don't use it here.")
+        print("     (photo, map, device, the paper's own system diagram used as planning §object")
+        print("     says); don't use it for a chart.")
 
     print()
     print("=" * 72)

@@ -144,6 +144,66 @@ class NameGrid(unittest.TestCase):
         self.assertEqual([n for n, _ in got], [4])
 
 
+class FortyNinthRound(unittest.TestCase):
+    """The next blind trial: advice that contradicted another warning, a legend cut at the
+    edge, and two prose_audit checks that fought the planning guide."""
+
+    def test_strip_height_advice_keeps_the_notes_it_asked_for(self):
+        """Identical bars need a note per row; the height advice then said "drop `note`", and
+        dropping `fine` gained 0.09 inches."""
+        import build_figs
+        rows = [{"label": "express", "bars": 64, "groups": [64], "group_label": "one timetable",
+                 "note": "the busiest stop sets the timetable for all"},
+                {"label": "local", "bars": 64, "groups": [32, 32],
+                 "group_label": "a timetable per 32 stops",
+                 "note": "each block of 32 gets its own timetable"},
+                {"label": "night", "bars": 64, "groups": [16, 16, 16, 16],
+                 "group_label": "per 16", "outer": "a second line-wide timetable",
+                 "note": "blocks of 16, plus one line timetable"}]
+        d = {"kind": "strip", "rows": rows,
+             "takeaway": "Stop pattern, and the timetable that stops share."}
+        tmp = tempfile.mkdtemp(prefix="st-")
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        build_figs.BOUND.clear()
+        build_figs.draw_strip(d, os.path.join(tmp, "s.png"), (5.51, 2.55), [])
+        hint = build_figs.BOUND.get(("s.png", "hint")) or ""
+        self.assertIn("Keep the row notes", hint)
+        self.assertNotIn("drop the row notes", hint)
+        self.assertIn("takeaway", hint)
+
+    def test_dots_legend_is_not_cut_at_the_edge(self):
+        import build_figs
+        import figs_extra
+        t = {"header": ["setting", "that pump on its own", "whole treatment plant"],
+             "rows": [["North, cold start", "-12.3", "-14.1"], ["South, cold start", "-27.5", "-33.4"]]}
+        tmp = tempfile.mkdtemp(prefix="dt-")
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        warn = []
+        figs_extra.draw_dots(t, os.path.join(tmp, "d.png"), (3.25, 2.45), warn, build_figs, "points")
+        self.assertEqual([w for w in warn if "clipped" in w], [], warn)
+
+    def test_backup_terms_are_not_counted_as_never_said(self):
+        """A backup slide has no timed script; its answer is spoken when a question calls for it."""
+        import prose_audit
+        slides = [{"n": 1, "title": "Main", "screen": "Main", "say": ["Hello."]},
+                  {"n": 2, "title": "Backup", "screen": "QZT per row", "say": [], "backup": True}]
+        self.assertEqual(prose_audit.unspoken_terms(slides), [])
+        slides[1]["backup"] = False
+        self.assertTrue(prose_audit.unspoken_terms(slides))
+
+    def test_a_question_in_the_lines_is_not_judged_against_the_thesis(self):
+        """planning §question keeps the conclusion's words off that slide, so the overlap check
+        must skip it wherever the question is written."""
+        import prose_audit
+        q = {"n": 3, "kind": "standout", "title": "", "lead": "Same route, same morning.",
+             "lines": ["Which one arrives first?"]}
+        a = {"n": 9, "kind": "standout", "title": "", "lead": "The timetable decides the wait.",
+             "lines": []}
+        got = [n for n, _w, _t in prose_audit.standouts_off_thesis(
+            [q, a], "The timetable, not the route, decides the wait.")]
+        self.assertEqual(got, [9])
+
+
 class PagesAndClaims(unittest.TestCase):
 
     def test_pages_map_to_slides_with_and_without_a_title_slide(self):

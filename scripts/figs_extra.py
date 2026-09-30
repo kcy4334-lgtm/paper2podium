@@ -216,9 +216,17 @@ def draw_dots(t, path, slot, warn, bf, xlabel=None, log=False, takeaway=None):
     # cut off in a narrow cell.
     tk_lines = _wrap_to(bf, bf.strip_markup(str(takeaway)), fs, slot[0] - 0.2) if takeaway else []
     b_in = 0.30 + (0.24 if xlabel else 0.0) + (0.06 + 0.20 * len(tk_lines) if tk_lines else 0.0)
-    t_in = 0.30 if multi else 0.10
-    h = min(slot[1], max(1.3, row_in * len(rows) + b_in + t_in))
     w = slot[0]
+    # The legend is measured before the figure is sized. Centred over the axes (which
+    #   sit right of the row names) it ran off the right edge and "whole treatment plant"
+    #   was cut to "whole treat". It is centred over the figure now, and stacked one name per
+    #   line when one line cannot hold them.
+    _names = [bf.strip_markup(str(s)) for s in series if s]
+    _leg_w = (sum(bf.text_w(s, fs - 1) + 0.30 for s in _names)
+              + 1.2 * (fs - 1) / 72.0 * max(0, len(_names) - 1))
+    leg_stack = multi and _leg_w > w - 0.1
+    t_in = ((0.12 + 0.20 * len(_names)) if leg_stack else 0.30) if multi else 0.10
+    h = min(slot[1], max(1.3, row_in * len(rows) + b_in + t_in))
     fig = plt.figure(figsize=(w, h))
     lab_w = max([bf.text_w(ln, fs, "bold") for s in shown for ln in s.split("\n")]
                 or [0.5]) + 0.25
@@ -343,9 +351,10 @@ def draw_dots(t, path, slot, warn, bf, xlabel=None, log=False, takeaway=None):
         ax.set_xlabel(bf.strip_markup(str(xlabel)), fontsize=fs - 1)
         seen.append((float(fs - 1), bf.strip_markup(str(xlabel))))
     if multi:
-        ax.legend(fontsize=fs - 1, frameon=False, ncol=min(4, len(series)),
-                  loc="lower center", bbox_to_anchor=(0.5, 1.0), borderaxespad=0.1,
-                  handletextpad=0.3, columnspacing=1.2)
+        fig.legend(*ax.get_legend_handles_labels(), fontsize=fs - 1, frameon=False,
+                   ncol=1 if leg_stack else min(4, len(series)),
+                   loc="upper center", bbox_to_anchor=(0.5, 1.0), borderaxespad=0.1,
+                   handletextpad=0.3, columnspacing=1.2)
         for s in series:
             seen.append((float(fs - 1), s))
     if tk_lines:

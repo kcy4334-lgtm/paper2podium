@@ -844,7 +844,7 @@ def highlight_labels(node):
             out += highlight_labels(v)
     return out
 FIGURE_KEYS = [("path", "Figure file"), ("lead", "One line above the figure"),
-               ("picture", "Declares that this is not a data figure (a map, a photo of the setup), so there's nothing to redraw; write the reason. Excluded from `prose_audit`'s \"just pasted it in\" check. A data figure with coordinates not in the paper (e.g. a scatter plot) uses `highlight`, not this"),
+               ("picture", "Declares that this is not a data figure (a map, a photo of the setup, the paper's drawing of its system), so there's nothing to redraw; write the reason. Excluded from `prose_audit`'s \"just pasted it in\" check. A data figure with coordinates not in the paper (e.g. a scatter plot) uses `highlight`, not this"),
                ("crop", "Only one panel of a figure: {x, y, w, h}, as a ratio 0-1 measured from the figure's top-left. The deck and the PPTX share the same cropped PNG. `highlight` is relative to the cropped figure"),
                ("highlight", "A box marking what to look at, on a pasted figure: {x, y, w, h, label, mark} (a list also works). Ratio 0-1 measured from the figure's top-left. For when the result exists only in the figure"),
                ("share", "Share of the body height when placed below a diagram (default 0.24)"),

@@ -376,8 +376,9 @@ reaching for tiles.
   - A `lead` above: what the audience needs to know about the system before the first
     result. The `foot`: one sentence on what the system is.
   - If the paper already draws the object as a wide diagram (a graphical model, a chain,
-    an architecture), use that figure alone for the slide. Stacking a pipeline on top of a
-    wide figure shrinks both until neither reads.
+    an architecture), use that figure alone for the slide, declared with
+    `picture: "the paper's system diagram"` so it is not taken for a pasted chart.
+    Stacking a pipeline on top of a wide figure shrinks both until neither reads.
     If the paper's drawing is tall (a stack drawn bottom to top), it prints small on a
     16:9 slide. Redraw it as a `pipeline` in the paper's own part names and put the
     paper's figure in backup.
