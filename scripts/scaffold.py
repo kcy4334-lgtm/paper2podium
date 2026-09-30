@@ -1178,7 +1178,7 @@ def main(argv=None):
         print("   Not a single table could be read. If the manuscript has tables, "
               "check the syntax.")
     print("   This is a skeleton. Fill in every `TODO:`, then run "
-          "build_deck/build_pptx/build_script.")
+          "`python scripts/build.py slides.yaml -o out`.")
     return 0
 
 

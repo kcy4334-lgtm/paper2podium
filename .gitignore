@@ -6,7 +6,7 @@ venv/
 .pytest_cache/
 .DS_Store
 
-# LaTeX 실행 부산물이 저장소 루트에 떨어진다
+# LaTeX byproducts
 *.log
 texput.*
 talk.aux
@@ -15,6 +15,11 @@ talk.snm
 talk.toc
 talk.out
 
-# 검사기 출력을 파일로 받아 두는 사람이 많다
+# Build output
+/out/
+examples/gw150914/out/figs/
+examples/gw150914/out/talk.tex
+
+# Checker output saved to a file
 log.txt
 *.out.txt
